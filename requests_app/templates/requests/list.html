@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+
+{% block title %}قائمة الطلبات - خدمة المواطنين{% endblock %}
+
+{% block page_indicator %}
+<div class="page-indicator">
+	<i class="fas fa-list"></i> قائمة الطلبات - الموقع الرسمي للنائب احمد ابوزيد
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0" style="color: #1e40af;">
+            <i class="fas fa-file-alt me-2"></i>
+            قائمة طلباتي
+        </h2>
+        <a href="{% url 'requests:create' %}" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>
+            طلب جديد
+        </a>
+    </div>
+
+    {% if requests %}
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="border-0" style="color: #1e40af;">
+                                <i class="fas fa-hashtag me-2"></i>
+                                رقم التتبع
+                            </th>
+                            <th class="border-0" style="color: #1e40af;">
+                                <i class="fas fa-file-alt me-2"></i>
+                                عنوان الطلب
+                            </th>
+                            <th class="border-0" style="color: #1e40af;">
+                                <i class="fas fa-calendar me-2"></i>
+                                تاريخ التقديم
+                            </th>
+                            <th class="border-0" style="color: #1e40af;">
+                                <i class="fas fa-info-circle me-2"></i>
+                                الحالة
+                            </th>
+                            <th class="border-0" style="color: #1e40af;">
+                                <i class="fas fa-cogs me-2"></i>
+                                الإجراءات
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for request in requests %}
+                        <tr>
+                            <td class="align-middle">
+                                <strong class="text-primary">{{ request.tracking_number }}</strong>
+                            </td>
+                            <td class="align-middle">
+                                <div class="fw-bold">{{ request.title }}</div>
+                                <small class="text-muted text-truncate d-block" style="max-width: 200px;">{{ request.description|truncatechars:50 }}</small>
+                            </td>
+                            <td class="align-middle">
+                                <small class="text-muted">{{ request.created_at|date:"Y/m/d" }}</small>
+                            </td>
+                            <td class="align-middle">
+                                {% if request.status %}
+                                    <div class="d-flex flex-column">
+                                        <span class="badge fs-6 px-3 py-2 mb-1" 
+                                              style="background-color: {{ request.status.color }}; color: white;">
+                                            {{ request.status.name }}
+                                        </span>
+                                        {% if request.status.description %}
+                                            <small class="text-muted">{{ request.status.description }}</small>
+                                        {% endif %}
+                                    </div>
+                                {% else %}
+                                    <span class="badge bg-secondary text-white">غير محدد</span>
+                                {% endif %}
+                            </td>
+                            <td class="align-middle">
+                                <a href="{% url 'requests:detail' request.tracking_number %}" class="btn btn-sm btn-outline-primary" 
+                                   style="border-color: #1e40af; color: #1e40af;">
+                                    <i class="fas fa-eye me-1"></i>
+                                    عرض
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="text-center py-5">
+        <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" 
+             style="width: 100px; height: 100px;">
+            <i class="fas fa-file-alt text-primary" style="font-size: 3rem; color: #1e40af !important;"></i>
+        </div>
+        <h4 class="text-muted mb-3">لا توجد طلبات حالياً</h4>
+        <p class="text-muted mb-4">كن أول من يقدم طلباً للحصول على الخدمات</p>
+        <a href="{% url 'requests:create' %}" class="btn btn-primary btn-lg">
+            <i class="fas fa-plus me-2"></i>
+            تقديم طلب جديد
+        </a>
+    </div>
+    {% endif %}
+
+    <div class="text-center mt-4">
+        <a href="{% url 'home' %}" class="btn btn-outline-primary" style="border-color: #1e40af; color: #1e40af;">
+            <i class="fas fa-home me-2"></i>
+            العودة للرئيسية
+        </a>
+    </div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,573 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}عن النائب أحمد أبو زيد - الموقع الرسمي{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/about-page.css' %}">
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/gallery.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<div class="page-indicator">
+    <i class="fas fa-user-tie"></i>
+    عن النائب أحمد أبو زيد
+</div>
+
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-4 text-center mb-4">
+                <div class="profile-image-container">
+                    <img src="{% static 'images/461730856_935019561988799_4979448201153344244_n.jpg' %}" 
+                         alt="النائب أحمد أبو زيد" 
+                         class="profile-image">
+                   
+                </div>
+            </div>
+            <div class="col-lg-8">
+                <div class="hero-content">
+                    <h1 class="hero-title">النائب أحمد أبو زيد</h1>
+                    <h2 class="hero-subtitle">عضو مجلس النواب عن دائرة منوف – السادات</h2>
+                    <p class="hero-description">
+                        صوت قوي في البرلمان، مدافع عن حقوق المواطنين، وعضو نشط في لجنة العلاقات الخارجية. 
+                        معروف بقربه من الناس وحرصه على حل مشاكلهم وتطوير منطقته.
+                    </p>
+                    <div class="hero-badges">
+                        <span class="badge badge-primary">عضو مجلس النواب</span>
+                        <span class="badge badge-secondary">لجنة العلاقات الخارجية</span>
+                        <span class="badge badge-success">دائرة منوف - السادات</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Navigation Tabs -->
+<section class="tabs-section">
+    <div class="container">
+        <ul class="nav nav-tabs custom-tabs" id="aboutTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="biography-tab" data-bs-toggle="tab" data-bs-target="#biography" type="button" role="tab">
+                    <i class="fas fa-user"></i> السيرة الذاتية
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="activities-tab" data-bs-toggle="tab" data-bs-target="#activities" type="button" role="tab">
+                    <i class="fas fa-tasks"></i> الأنشطة والمواقف
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="achievements-tab" data-bs-toggle="tab" data-bs-target="#achievements" type="button" role="tab">
+                    <i class="fas fa-trophy"></i> الإنجازات
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab">
+                    <i class="fas fa-phone"></i> التواصل
+                </button>
+            </li>
+        </ul>
+    </div>
+</section>
+
+<!-- Tab Content -->
+<section class="tab-content-section">
+    <div class="container">
+        <div class="tab-content" id="aboutTabsContent">
+            
+            <!-- Biography Tab -->
+            <div class="tab-pane fade show active" id="biography" role="tabpanel">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="content-card">
+                            <h3 class="section-title">
+                                <i class="fas fa-user-circle text-primary"></i>
+                                السيرة الذاتية والنشأة
+                            </h3>
+                            
+                            <div class="biography-content">
+                                <div class="info-section">
+                                    <h4>المعلومات الأساسية</h4>
+                                    <div class="info-grid">
+                                        <div class="info-item">
+                                            <i class="fas fa-id-card"></i>
+                                            <div>
+                                                <strong>الاسم:</strong>
+                                                <span>أحمد أبو زيد</span>
+                                            </div>
+                                        </div>
+                                        <div class="info-item">
+                                            <i class="fas fa-briefcase"></i>
+                                            <div>
+                                                <strong>المنصب:</strong>
+                                                <span>عضو مجلس النواب</span>
+                                            </div>
+                                        </div>
+                                        <div class="info-item">
+                                            <i class="fas fa-map-marker-alt"></i>
+                                            <div>
+                                                <strong>الدائرة الانتخابية:</strong>
+                                                <span>منوف – السادات (محافظة المنوفية)</span>
+                                            </div>
+                                        </div>
+                                        <div class="info-item">
+                                            <i class="fas fa-users"></i>
+                                            <div>
+                                                <strong>اللجان:</strong>
+                                                <span>عضو لجنة العلاقات الخارجية</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="biography-text">
+                                    <h4>نبذة عن النائب</h4>
+                                    <p>
+                                        النائب أحمد أبو زيد، عضو مجلس النواب عن دائرة منوف والسادات بمحافظة المنوفية، 
+                                        واحد من الأصوات النشطة تحت قبة البرلمان. معروف بقربه من الناس وحرصه الدائم 
+                                        على القضايا التي تهم المواطن، من تحسين البنية التحتية، إلى مواجهة الغلاء ودعم محدودي الدخل.
+                                    </p>
+                                    <p>
+                                        له مواقف قوية في الدفاع عن القضايا الوطنية، ودائمًا حاضر في الأزمات 
+                                        ليدعم أهله وناسه. يتميز بالتواصل المباشر مع المواطنين والاستماع لمطالبهم 
+                                        والعمل على حلها بكل جدية ومسؤولية.
+                                    </p>
+                                    <p>
+                                        يعمل النائب أحمد أبو زيد على تطوير منطقته من خلال دعم المشاريع التنموية 
+                                        والاهتمام بالتعليم والصحة والبنية التحتية. كما يحرص على متابعة شؤون المواطنين 
+                                        وحل مشاكلهم من خلال مكتبه في مدينة السادات.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-4">
+                        <div class="sidebar-card">
+                            <h4 class="sidebar-title">معلومات سريعة</h4>
+                            <div class="quick-info">
+                                <div class="quick-info-item">
+                                    <i class="fas fa-calendar-alt text-primary"></i>
+                                    <div>
+                                        <strong>فترة التعيين:</strong>
+                                        <span>عضو مجلس النواب الحالي</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="quick-info-item">
+                                    <i class="fas fa-map text-info"></i>
+                                    <div>
+                                        <strong>المحافظة:</strong>
+                                        <span>المنوفية</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="sidebar-card">
+                            <h4 class="sidebar-title">
+                                <i class="fas fa-images text-primary"></i>
+                                معرض الصور
+                            </h4>
+                            <div class="modern-gallery">
+                                <div class="gallery-item-small">
+                                    <img src="{% static 'images/4.jpg' %}" alt="صورة 1" class="gallery-img">
+                                    <div class="gallery-overlay-small">
+                                        <i class="fas fa-search-plus"></i>
+                                    </div>
+                                </div>
+                                <div class="gallery-item-small">
+                                    <img src="{% static 'images/5.jpg' %}" alt="صورة 2" class="gallery-img">
+                                    <div class="gallery-overlay-small">
+                                        <i class="fas fa-search-plus"></i>
+                                    </div>
+                                </div>
+                                <div class="gallery-item-small">
+                                    <img src="{% static 'images/6.jpg' %}" alt="صورة 3" class="gallery-img">
+                                    <div class="gallery-overlay-small">
+                                        <i class="fas fa-search-plus"></i>
+                                    </div>
+                                </div>
+                                <div class="gallery-item-small">
+                                    <img src="{% static 'images/mustaqbal_watan_logo.png' %}" alt="لوجو حزب مستقبل الوطن" class="gallery-img">
+                                    <div class="gallery-overlay-small">
+                                        <i class="fas fa-search-plus"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activities Tab -->
+            <div class="tab-pane fade" id="activities" role="tabpanel">
+                <div class="content-card">
+                    <h3 class="section-title">
+                        <i class="fas fa-tasks text-success"></i>
+                        الأنشطة والمواقف
+                    </h3>
+                    
+                    <div class="activities-content">
+                        <div class="activity-section">
+                            <h4>التصريحات المميزة</h4>
+                            <div class="quote-card">
+                                <div class="quote-icon">
+                                    <i class="fas fa-quote-right"></i>
+                                </div>
+                                <blockquote>
+                                    "شباب مصر يعيش أزهى عصوره في ظل قيادة الرئيس السيسي، ونحن نعمل على دعمهم وتوفير الفرص المناسبة لهم"
+                                </blockquote>
+                                <cite>- النائب أحمد أبو زيد</cite>
+                            </div>
+                            
+                            <div class="quote-card">
+                                <div class="quote-icon">
+                                    <i class="fas fa-quote-right"></i>
+                                </div>
+                                <blockquote>
+                                    "خدمة المواطن هي أولويتنا الأولى، وسنواصل العمل على حل مشاكلهم وتطوير منطقتنا"
+                                </blockquote>
+                                <cite>- النائب أحمد أبو زيد</cite>
+                            </div>
+                        </div>
+
+                        <div class="activity-section">
+                            <h4>النشاط الميداني</h4>
+                            <div class="activity-timeline">
+                                <div class="timeline-item">
+                                    <div class="timeline-marker"></div>
+                                    <div class="timeline-content">
+                                        <h5>جولة تفقدية في حي الفردوس</h5>
+                                        <p class="text-muted">مدينة السادات</p>
+                                        <p>
+                                            قام النائب أحمد أبو زيد بجولة تفقدية شاملة في حي الفردوس بمدينة السادات، 
+                                            حيث أشاد بالتنظيم والجمال العمراني هناك، وأكد على استمرار دعمه لتطوير المنطقة.
+                                        </p>
+                                    </div>
+                                </div>
+                                
+                                <div class="timeline-item">
+                                    <div class="timeline-marker"></div>
+                                    <div class="timeline-content">
+                                        <h5>لقاءات دورية مع المواطنين</h5>
+                                        <p class="text-muted">مكتب النائب</p>
+                                        <p>
+                                            يعقد النائب لقاءات دورية مع المواطنين لاستماع مطالبهم ومشاكلهم 
+                                            والعمل على حلها بالتعاون مع الجهات المعنية.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="activity-section">
+                            <h4>المواقف السياسية</h4>
+                            <div class="positions-grid">
+                                <div class="position-card">
+                                    <i class="fas fa-shield-alt text-primary"></i>
+                                    <h5>الدفاع عن القضايا الوطنية</h5>
+                                    <p>مواقف قوية في الدفاع عن مصالح الوطن والمواطنين</p>
+                                </div>
+                                <div class="position-card">
+                                    <i class="fas fa-handshake text-success"></i>
+                                    <h5>دعم محدودي الدخل</h5>
+                                    <p>العمل على دعم الفئات الأكثر احتياجاً في المجتمع</p>
+                                </div>
+                                <div class="position-card">
+                                    <i class="fas fa-road text-warning"></i>
+                                    <h5>تطوير البنية التحتية</h5>
+                                    <p>الاهتمام بتطوير الطرق والخدمات الأساسية</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Achievements Tab -->
+            <div class="tab-pane fade" id="achievements" role="tabpanel">
+                <div class="content-card">
+                    <h3 class="section-title">
+                        <i class="fas fa-trophy text-warning"></i>
+                        الإنجازات والمشاريع
+                    </h3>
+                    
+                    <div class="achievements-content">
+                        <div class="achievements-grid">
+                            <div class="achievement-card">
+                                <div class="achievement-icon">
+                                    <i class="fas fa-road"></i>
+                                </div>
+                                <h4>تطوير الطرق</h4>
+                                <p>تطوير شامل لشبكة الطرق في الدائرة الانتخابية مع رصف الطرق الترابية</p>
+                                <div class="achievement-stats">
+                                    <span class="stat">+25</span>
+                                    <span class="stat-label">كيلومتر مطور</span>
+                                </div>
+                            </div>
+                            
+                            <div class="achievement-card">
+                                <div class="achievement-icon">
+                                    <i class="fas fa-lightbulb"></i>
+                                </div>
+                                <h4>إنارة الشوارع</h4>
+                                <p>إنارة كاملة لجميع الشوارع الرئيسية والفرعية</p>
+                                <div class="achievement-stats">
+                                    <span class="stat">100%</span>
+                                    <span class="stat-label">تغطية إنارة</span>
+                                </div>
+                            </div>
+                            
+                            <div class="achievement-card">
+                                <div class="achievement-icon">
+                                    <i class="fas fa-hospital"></i>
+                                </div>
+                                <h4>الخدمات الصحية</h4>
+                                <p>تطوير المستشفيات والمراكز الصحية وتوفير الأجهزة الطبية</p>
+                                <div class="achievement-stats">
+                                    <span class="stat">+5</span>
+                                    <span class="stat-label">مراكز صحية</span>
+                                </div>
+                            </div>
+                            
+                            <div class="achievement-card">
+                                <div class="achievement-icon">
+                                    <i class="fas fa-graduation-cap"></i>
+                                </div>
+                                <h4>التعليم</h4>
+                                <p>تطوير المدارس والجامعات وتوفير المعامل الحديثة</p>
+                                <div class="achievement-stats">
+                                    <span class="stat">+8</span>
+                                    <span class="stat-label">مدارس جديدة</span>
+                                </div>
+                            </div>
+                            
+                            <div class="achievement-card">
+                                <div class="achievement-icon">
+                                    <i class="fas fa-water"></i>
+                                </div>
+                                <h4>خدمات المياه</h4>
+                                <p>تطوير شبكة المياه والصرف الصحي</p>
+                                <div class="achievement-stats">
+                                    <span class="stat">+12</span>
+                                    <span class="stat-label">منطقة جديدة</span>
+                                </div>
+                            </div>
+                            
+                            <div class="achievement-card">
+                                <div class="achievement-icon">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <h4>خدمة المواطنين</h4>
+                                <p>حل أكثر من 5000 طلب ومسألة للمواطنين</p>
+                                <div class="achievement-stats">
+                                    <span class="stat">5000+</span>
+                                    <span class="stat-label">طلب محلول</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="achievements-gallery">
+                            <h4 class="gallery-section-title">
+                                <i class="fas fa-camera text-warning"></i>
+                                معرض الإنجازات
+                            </h4>
+                            <div class="modern-achievements-gallery">
+                                <div class="achievement-gallery-item">
+                                    <div class="gallery-image-container">
+                                        <img src="{% static 'images/480100940_1035016138655807_4171339644751755432_n.jpg' %}" alt="إنجاز 1" class="achievement-gallery-img">
+                                        <div class="achievement-gallery-overlay">
+                                            <div class="overlay-content">
+                                                <h5>مشاريع التنمية</h5>
+                                                <p>تطوير شامل للمنطقة</p>
+                                                <button class="btn btn-light btn-sm">
+                                                    <i class="fas fa-eye"></i> عرض التفاصيل
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="achievement-gallery-item">
+                                    <div class="gallery-image-container">
+                                        <img src="{% static 'images/513855479_30109175582059932_767779498495140005_n.jpg' %}" alt="إنجاز 2" class="achievement-gallery-img">
+                                        <div class="achievement-gallery-overlay">
+                                            <div class="overlay-content">
+                                                <h5>خدمة المواطنين</h5>
+                                                <p>حل المشاكل بسرعة وكفاءة</p>
+                                                <button class="btn btn-light btn-sm">
+                                                    <i class="fas fa-eye"></i> عرض التفاصيل
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="achievement-gallery-item">
+                                    <div class="gallery-image-container">
+                                        <img src="{% static 'images/4.jpg' %}" alt="إنجاز 3" class="achievement-gallery-img">
+                                        <div class="achievement-gallery-overlay">
+                                            <div class="overlay-content">
+                                                <h5>لقاءات المواطنين</h5>
+                                                <p>قرب من الناس وحل المشاكل</p>
+                                                <button class="btn btn-light btn-sm">
+                                                    <i class="fas fa-eye"></i> عرض التفاصيل
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="achievement-gallery-item">
+                                    <div class="gallery-image-container">
+                                        <img src="{% static 'images/5.jpg' %}" alt="إنجاز 4" class="achievement-gallery-img">
+                                        <div class="achievement-gallery-overlay">
+                                            <div class="overlay-content">
+                                                <h5>الأنشطة المجتمعية</h5>
+                                                <p>مشاركة فعالة في المجتمع</p>
+                                                <button class="btn btn-light btn-sm">
+                                                    <i class="fas fa-eye"></i> عرض التفاصيل
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Tab -->
+            <div class="tab-pane fade" id="contact" role="tabpanel">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="content-card">
+                            <h3 class="section-title">
+                                <i class="fas fa-phone text-info"></i>
+                                التواصل والمصادر
+                            </h3>
+                            
+                            <div class="contact-content">
+                                <div class="contact-section">
+                                    <h4>معلومات التواصل</h4>
+                                    <div class="contact-info">
+                                        <div class="contact-item">
+                                            <i class="fab fa-facebook text-primary"></i>
+                                            <div>
+                                                <strong>صفحة فيسبوك:</strong>
+                                                <a href="https://www.facebook.com/share/14MAx3f7qAQ/?mibextid=wwXIfr" target="_blank">النائب أحمد أبوزيد - مدينة السادات</a>
+                                            </div>
+                                        </div>
+                                        <div class="contact-item">
+                                            <i class="fas fa-map-marker-alt text-danger"></i>
+                                            <div>
+                                                <strong>مكتب النائب:</strong>
+                                                <span>مدينة السادات - محافظة المنوفية - شارع النيل</span>
+                                            </div>
+                                        </div>
+                                        <div class="contact-item">
+                                            <i class="fas fa-clock text-warning"></i>
+                                            <div>
+                                                <strong>مواعيد الاستقبال:</strong>
+                                                <span>الأحد - الخميس: 9:00 ص - 2:00 م</span>
+                                            </div>
+                                        </div>
+                                        <div class="contact-item">
+                                            <i class="fas fa-phone text-success"></i>
+                                            <div>
+                                                <strong>الهاتف:</strong>
+                                                <span>+201015916082</span>
+                                            </div>
+                                        </div>
+                                        <div class="contact-item">
+                                            <i class="fas fa-envelope text-info"></i>
+                                            <div>
+                                                <strong>البريد الإلكتروني:</strong>
+                                                <span>diabm4930@gmail.com</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="contact-section">
+                                    <h4>تقديم الطلبات</h4>
+                                    <div class="request-info">
+                                        <p>
+                                            يمكنك تقديم طلبك مباشرة من خلال الموقع الرسمي ومتابعة حالة طلبك 
+                                            بسهولة ويسر. نحن هنا لخدمتكم في أي وقت.
+                                        </p>
+                                        <a href="/requests/create/" class="btn btn-primary btn-lg">
+                                            <i class="fas fa-plus"></i>
+                                            قدم طلبك الآن
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-4">
+                        <div class="sidebar-card">
+                            <h4 class="sidebar-title">معلومات سريعة</h4>
+                            <div class="quick-contact">
+                                <div class="quick-contact-item">
+                                    <i class="fas fa-envelope text-primary"></i>
+                                    <div>
+                                        <strong>البريد الإلكتروني:</strong>
+                                        <span>diabm4930@gmail.com</span>
+                                    </div>
+                                </div>
+                                <div class="quick-contact-item">
+                                    <i class="fas fa-phone text-success"></i>
+                                    <div>
+                                        <strong>الهاتف:</strong>
+                                        <span>201015916082</span>
+                                    </div>
+                                </div>
+                                <div class="quick-contact-item">
+                                    <i class="fas fa-map-marker-alt text-danger"></i>
+                                    <div>
+                                        <strong>العنوان:</strong>
+                                        <span>مدينة السادات - المنوفية</span>
+                                    </div>
+                                </div>
+                                <div class="quick-contact-item">
+                                    <i class="fas fa-clock text-warning"></i>
+                                    <div>
+                                        <strong>مواعيد العمل:</strong>
+                                        <span>الأحد - الخميس</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="sidebar-card">
+                            <h4 class="sidebar-title">الأسئلة المتكررة</h4>
+                            <div class="faq-list">
+                                <div class="faq-item">
+                                    <h6>ما هي مواعيد مكتب النائب؟</h6>
+                                    <p>الأحد - الخميس من 9:00 ص إلى 2:00 م</p>
+                                </div>
+                                <div class="faq-item">
+                                    <h6>كيف يمكنني تقديم طلب؟</h6>
+                                    <p>يمكنك تقديم الطلب من خلال الموقع أو زيارة المكتب</p>
+                                </div>
+                                <div class="faq-item">
+                                    <h6>ما هي أهم الملفات التشريعية؟</h6>
+                                    <p>تطوير البنية التحتية ودعم محدودي الدخل</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

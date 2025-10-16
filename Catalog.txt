@@ -1,0 +1,82 @@
+كتالوج تشغيل المشروع (Django)
+
+المتطلبات:
+- Python 3.10+ و pip
+- Git (اختياري)
+- يُفضّل استخدام PowerShell على Windows
+
+1) إنشاء بيئة عمل وتثبيت الاعتماديات
+- افتح PowerShell داخل المسار: C:\Users\diabm\Desktop\dipooo
+- نفّذ الأوامر التالية:
+python -m venv .venv
+.\.venv\Scripts\activate
+python -m pip install --upgrade pip
+pip install -r requirements.txt
+
+2) إعداد الإعدادات المحلية
+- تأكّد من أن DEBUG=True داخل الملف: website\settings.py أثناء التطوير.
+- أضف القيم التالية إلى ALLOWED_HOSTS إن لزم:
+  - localhost
+  - 127.0.0.1
+
+3) تهيئة قاعدة البيانات وإنشاء مستخدم إداري
+python manage.py migrate
+python manage.py createsuperuser
+
+4) تحميل بيانات افتراضية (اختياري)
+- بيانات الطلبات:
+python manage.py create_default_statuses
+python manage.py create_sample_requests
+
+- بيانات الإنجازات (حسب الحاجة):
+python manage.py import_achievements
+python manage.py fix_village_names
+python manage.py update_achievement_villages
+
+5) تشغيل الخادم المحلي
+python manage.py runserver
+
+- افتح المتصفح على:
+  - http://127.0.0.1:8000/
+  - لوحة الإدارة: http://127.0.0.1:8000/admin/
+
+6) الملفات الثابتة والوسائط
+- المجلدات:
+  - static\ (لملفات الواجهة)
+  - media\ (للصور والملفات المرفوعة)
+
+- في حال التجهيز للإنتاج، اجمع الملفات الثابتة:
+python manage.py collectstatic
+
+تشغيل على نفس الشبكة (فتح الموقع على الموبايل):
+1) اعرف IP الجهاز (Windows):
+   ipconfig
+   - خُد IPv4 Address الخاص بك (مثلاً 192.168.1.5)
+2) اسمح بالاتصال من الشبكة في Django:
+   - داخل website\settings.py أضف الـ IP إلى ALLOWED_HOSTS، مثال:
+     ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '192.168.1.5']
+3) شغّل السيرفر على كل الواجهات:
+   python manage.py runserver 0.0.0.0:8000
+4) من الموبايل المتصل بنفس الـ Wi‑Fi افتح:
+   http://192.168.1.5:8000/
+ملاحظات الشبكة:
+- لو عندك Firewall على Windows، اسمح للـ Python بالدخول (Private networks).
+- لازم الموبايل والكمبيوتر يكونوا على نفس الراوتر/الشبكة.
+
+تشغيل للإنتاج (مختصر):
+- يُفضّل خادم Linux مع Nginx + Gunicorn.
+- خطوات عامة:
+  1) اضبط DEBUG=False داخل website\settings.py
+  2) املأ ALLOWED_HOSTS و SECRET_KEY من متغيرات بيئة آمنة
+  3) فعّل بيئة افتراضية وثبّت الاعتماديات
+  4) شغّل Gunicorn:
+     gunicorn website.wsgi:application --bind 0.0.0.0:8000
+  5) استخدم Nginx كـ reverse proxy وتقديم static/media
+
+- على Windows يمكن استخدام waitress بدل Gunicorn:
+pip install waitress
+waitress-serve --port=8000 website.wsgi:application
+
+ملاحظات:
+- قاعدة البيانات الحالية: db.sqlite3 مناسبة للتطوير فقط. للإنتاج استخدم PostgreSQL.
+- إذا ظهرت مشاكل في عرض الصور/الوسائط، تأكّد من صلاحيات مجلد media\.

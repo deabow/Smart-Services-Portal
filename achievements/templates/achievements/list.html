@@ -1,0 +1,782 @@
+{% extends 'base.html' %}
+
+{% block title %}الإنجازات - خدمة المواطنين{% endblock %}
+
+{% block page_indicator %}
+<div class="page-indicator">
+	<i class="fas fa-trophy"></i> الإنجازات - الموقع الرسمي للنائب احمد ابوزيد
+</div>
+{% endblock %}
+
+{% block content %}
+<style>
+	.achievement-card {
+		background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+		border: none;
+		border-radius: 20px;
+		box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+		transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+		overflow: hidden;
+		position: relative;
+	}
+
+	.achievement-card:hover {
+		transform: translateY(-8px) scale(1.02);
+		box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+	}
+
+	.achievement-card::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		height: 4px;
+		background: linear-gradient(90deg, #3b82f6, #1e40af, #1e3a8a);
+		opacity: 0;
+		transition: opacity 0.3s ease;
+	}
+
+	.achievement-card:hover::before {
+		opacity: 1;
+	}
+
+	.card-header-custom {
+		background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+		color: white;
+		border: none;
+		border-radius: 20px 20px 0 0;
+		padding: 1.5rem;
+		position: relative;
+		overflow: hidden;
+	}
+
+	.card-header-custom::before {
+		content: '';
+		position: absolute;
+		top: -50%;
+		left: -50%;
+		width: 200%;
+		height: 200%;
+		background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+		transform: rotate(45deg);
+		transition: all 0.6s ease;
+	}
+
+	.achievement-card:hover .card-header-custom::before {
+		transform: rotate(45deg) translate(50%, 50%);
+	}
+
+	.area-badge {
+		background: rgba(255, 255, 255, 0.2);
+		color: white;
+		border: 1px solid rgba(255, 255, 255, 0.3);
+		border-radius: 25px;
+		padding: 0.5rem 1rem;
+		font-size: 0.875rem;
+		font-weight: 600;
+		backdrop-filter: blur(10px);
+		transition: all 0.3s ease;
+	}
+
+	.area-badge:hover {
+		background: rgba(255, 255, 255, 0.3);
+		transform: scale(1.05);
+	}
+
+	.village-badge {
+		background: rgba(255, 255, 255, 0.2);
+		color: white;
+		border: 1px solid rgba(255, 255, 255, 0.3);
+		border-radius: 25px;
+		padding: 0.5rem 1rem;
+		font-size: 0.875rem;
+		font-weight: 600;
+		backdrop-filter: blur(10px);
+		transition: all 0.3s ease;
+	}
+
+	.village-badge:hover {
+		background: rgba(255, 255, 255, 0.3);
+		transform: scale(1.05);
+	}
+
+	.card-image-container {
+		position: relative;
+		height: 250px;
+		overflow: hidden;
+		border-radius: 0;
+	}
+
+	.card-image-container img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+		cursor: pointer;
+		/* Remove blue click/tap highlight */
+		-webkit-tap-highlight-color: transparent;
+		outline: none;
+	}
+
+	/* Ensure no outline on focus/active states */
+	.card-image-container img:focus,
+	.card-image-container img:active {
+		outline: none !important;
+	}
+
+	.achievement-card:hover .card-image-container img {
+		transform: scale(1.1);
+	}
+
+	.image-overlay {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background: linear-gradient(135deg, rgba(30, 64, 175, 0.8) 0%, rgba(59, 130, 246, 0.6) 100%);
+		display: none !important;
+	}
+
+
+	.enlarge-btn {
+		background: rgba(255, 255, 255, 0.9);
+		color: #1e40af;
+		border: none;
+		border-radius: 50%;
+		width: 60px;
+		height: 60px;
+		font-size: 1.5rem;
+		transition: all 0.3s ease;
+		box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+		cursor: pointer;
+		z-index: 10;
+	}
+
+	.enlarge-btn:hover {
+		background: white;
+		transform: scale(1.1);
+		box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+	}
+
+	.card-body-custom {
+		padding: 2rem;
+		background: white;
+	}
+
+	.achievement-title {
+		color: #1e40af;
+		font-size: 1.25rem;
+		font-weight: 700;
+		margin-bottom: 1rem;
+		line-height: 1.4;
+		transition: color 0.3s ease;
+	}
+
+	.achievement-card:hover .achievement-title {
+		color: #1e3a8a;
+	}
+
+	.achievement-description {
+		color: #64748b;
+		font-size: 0.95rem;
+		line-height: 1.6;
+		margin-bottom: 1.5rem;
+	}
+
+	.card-footer-custom {
+		background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+		border: none;
+		padding: 1.5rem;
+		border-radius: 0 0 20px 20px;
+	}
+
+	.location-info {
+		display: flex;
+		align-items: center;
+		color: #64748b;
+		font-size: 0.9rem;
+	}
+
+	.location-info i {
+		color: #3b82f6;
+		margin-left: 0.5rem;
+		font-size: 1rem;
+	}
+
+	.view-details-btn {
+		background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+		color: white;
+		border: none;
+		border-radius: 25px;
+		padding: 0.75rem 1.5rem;
+		font-weight: 600;
+		transition: all 0.3s ease;
+		box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+		cursor: pointer;
+		text-decoration: none;
+		display: inline-block;
+	}
+
+	.view-details-btn:hover {
+		background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
+		transform: translateY(-2px);
+		box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+		color: white;
+		text-decoration: none;
+	}
+
+	/* Carousel improvements */
+	.carousel-control-prev,
+	.carousel-control-next {
+		width: 15%;
+		background: rgba(0, 0, 0, 0.3);
+		border-radius: 50%;
+		height: 50px;
+		top: 50%;
+		transform: translateY(-50%);
+		backdrop-filter: blur(10px);
+		transition: all 0.3s ease;
+		cursor: pointer;
+		z-index: 5;
+	}
+
+	.carousel-control-prev:hover,
+	.carousel-control-next:hover {
+		background: rgba(0, 0, 0, 0.5);
+		transform: translateY(-50%) scale(1.1);
+	}
+
+	.carousel-control-prev-icon,
+	.carousel-control-next-icon {
+		width: 1.5rem;
+		height: 1.5rem;
+		filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+	}
+
+	.carousel-indicators {
+		bottom: 10px;
+		z-index: 5;
+	}
+
+	.carousel-indicators [data-bs-target] {
+		width: 10px;
+		height: 10px;
+		border-radius: 50%;
+		background-color: rgba(255, 255, 255, 0.7);
+		border: 2px solid rgba(255, 255, 255, 0.3);
+		transition: all 0.3s ease;
+		cursor: pointer;
+	}
+
+	.carousel-indicators [data-bs-target].active {
+		background-color: white;
+		border-color: white;
+		transform: scale(1.2);
+	}
+
+	/* Filter improvements */
+	.filter-card {
+		background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+		border: none;
+		border-radius: 20px;
+		box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+	}
+
+	.filter-card .form-select {
+		border: 2px solid #e2e8f0;
+		border-radius: 15px;
+		padding: 0.75rem 1rem;
+		transition: all 0.3s ease;
+	}
+
+	.filter-card .form-select:focus {
+		border-color: #3b82f6;
+		box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25);
+	}
+
+	.filter-card .btn {
+		border-radius: 15px;
+		padding: 0.75rem 1.5rem;
+		font-weight: 600;
+		transition: all 0.3s ease;
+	}
+
+	.filter-card .btn:hover {
+		transform: translateY(-2px);
+		box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+	}
+
+	/* Responsive improvements */
+	@media (max-width: 768px) {
+		.achievement-card {
+			margin-bottom: 1.5rem;
+		}
+		
+		.card-header-custom {
+			padding: 1rem;
+		}
+		
+		.card-body-custom {
+			padding: 1.5rem;
+		}
+		
+		.card-footer-custom {
+			padding: 1rem;
+		}
+	}
+
+	/* Loading animation */
+	@keyframes fadeInUp {
+		from {
+			opacity: 0;
+			transform: translateY(30px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	.achievement-card {
+		animation: fadeInUp 0.6s ease forwards;
+	}
+
+	.achievement-card:nth-child(1) { animation-delay: 0.1s; }
+	.achievement-card:nth-child(2) { animation-delay: 0.2s; }
+	.achievement-card:nth-child(3) { animation-delay: 0.3s; }
+	.achievement-card:nth-child(4) { animation-delay: 0.4s; }
+	.achievement-card:nth-child(5) { animation-delay: 0.5s; }
+	.achievement-card:nth-child(6) { animation-delay: 0.6s; }
+
+	/* Modal styles */
+	.achievement-modal .modal-content {
+		background: rgba(0, 0, 0, 0.9);
+		border: none;
+		border-radius: 15px;
+	}
+
+	.achievement-modal .modal-body {
+		padding: 0;
+	}
+
+	.achievement-modal .btn-close {
+		position: absolute;
+		top: 10px;
+		right: 10px;
+		z-index: 20;
+		background: rgba(255, 255, 255, 0.2);
+		border-radius: 50%;
+		padding: 8px;
+	}
+
+	.achievement-modal .btn-close:hover {
+		background: rgba(255, 255, 255, 0.3);
+	}
+
+	.achievement-modal img {
+		max-height: 80vh;
+		object-fit: contain;
+	}
+</style>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+	<h2 class="mb-0" style="color: #1e40af;">
+		<i class="fas fa-trophy me-2"></i>
+		الإنجازات والمشاريع
+	</h2>
+</div>
+
+<!-- Filter by area and village -->
+<div class="card filter-card mb-4">
+	<div class="card-body">
+		<form method="get" class="row g-3">
+			<div class="col-md-4">
+				<label for="area" class="form-label fw-bold" style="color: #1e40af;">المركز</label>
+				<select name="area" id="area" class="form-select" onchange="updateVillages(this.value)">
+					<option value="">جميع المراكز</option>
+					{% for a in areas %}
+					<option value="{{ a }}" {% if selected_area == a %}selected{% endif %}>{{ a }}</option>
+					{% endfor %}
+				</select>
+			</div>
+			<div class="col-md-4">
+				<label for="village" class="form-label fw-bold" style="color: #1e40af;">القرية</label>
+				<select name="village" id="village" class="form-select" {% if not selected_area %}disabled{% endif %}>
+					<option value="">جميع القرى</option>
+					{% for v in villages %}
+					<option value="{{ v.0 }}" {% if selected_village == v.0 %}selected{% endif %}>{{ v.1 }}</option>
+					{% endfor %}
+				</select>
+			</div>
+			<div class="col-md-4 d-flex align-items-end">
+				<button type="submit" class="btn btn-primary me-2">
+					<i class="fas fa-search me-2"></i>
+					بحث
+				</button>
+				<a href="{% url 'achievements:list' %}" class="btn btn-outline-primary" style="border-color: #1e40af; color: #1e40af;">
+					<i class="fas fa-refresh me-2"></i>
+					إعادة تعيين
+				</a>
+			</div>
+		</form>
+	</div>
+</div>
+
+{# Safe JSON for village choices #}
+{{ village_choices|json_script:"village-choices" }}
+
+<script>
+// Village filter functionality
+const villageChoices = JSON.parse(document.getElementById('village-choices').textContent);
+
+function updateVillages(selectedArea, preselectedVillage) {
+	const villageSelect = document.getElementById('village');
+	const villages = villageChoices[selectedArea] || [];
+	
+	// Clear current options
+	villageSelect.innerHTML = '<option value="">جميع القرى</option>';
+	
+	// Add new options
+	if (villages && villages.length > 0) {
+		villages.forEach(function(village) {
+			const option = document.createElement('option');
+			// village is [value, label]
+			option.value = Array.isArray(village) ? village[0] : village;
+			option.textContent = Array.isArray(village) ? village[1] : village;
+			villageSelect.appendChild(option);
+		});
+	}
+	
+	// Enable/disable village select
+	villageSelect.disabled = !selectedArea;
+	
+	// Preserve previously selected village if provided
+	if (preselectedVillage) {
+		villageSelect.value = preselectedVillage;
+	}
+}
+
+// Initialize villages on page load
+document.addEventListener('DOMContentLoaded', function() {
+	const areaSelect = document.getElementById('area');
+	const initiallySelectedVillage = "{{ selected_village|default_if_none:''|escapejs }}";
+	if (areaSelect && areaSelect.value) {
+		updateVillages(areaSelect.value, initiallySelectedVillage);
+	}
+});
+</script>
+
+{% if page_obj and page_obj.object_list %}
+<div class="row g-4">
+	{% for achievement in page_obj.object_list %}
+	<div class="col-md-6 col-lg-4">
+		<div class="achievement-card">
+			<!-- Header with area and village -->
+			<div class="card-header-custom">
+				<div class="d-flex justify-content-between align-items-center">
+					<span class="area-badge">{{ achievement.area }}</span>
+					{% if achievement.village %}
+					<span class="village-badge">
+						<i class="fas fa-map-marker-alt me-1"></i>
+						{{ achievement.village_display_name }}
+					</span>
+					{% endif %}
+				</div>
+			</div>
+
+			<!-- Image section -->
+			{% with imgs=achievement.images.all %}
+			{% if imgs|length > 1 %}
+			<div class="card-image-container">
+				<div id="carousel-{{ achievement.id }}" class="carousel slide h-100" data-bs-ride="carousel">
+					<div class="carousel-indicators">
+						{% for img in imgs %}
+						<button type="button" data-bs-target="#carousel-{{ achievement.id }}" data-bs-slide-to="{{ forloop.counter0 }}" class="{% if forloop.first %}active{% endif %}" aria-current="{% if forloop.first %}true{% else %}false{% endif %}" aria-label="Slide {{ forloop.counter }}"></button>
+						{% endfor %}
+					</div>
+					<div class="carousel-inner h-100">
+						{% for img in imgs %}
+						<div class="carousel-item {% if forloop.first %}active{% endif %} h-100">
+						<img src="{{ img.image.url }}" class="d-block w-100 h-100" alt="{{ achievement.title }}" draggable="false" loading="lazy" decoding="async" onclick="openImageModal('{{ img.image.url }}')">
+						</div>
+						{% endfor %}
+					</div>
+					<button class="carousel-control-prev" type="button" data-bs-target="#carousel-{{ achievement.id }}" data-bs-slide="prev" aria-label="السابق">
+						<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+					</button>
+					<button class="carousel-control-next" type="button" data-bs-target="#carousel-{{ achievement.id }}" data-bs-slide="next" aria-label="التالي">
+						<span class="carousel-control-next-icon" aria-hidden="true"></span>
+					</button>
+				</div>
+				<div class="image-overlay">
+				</div>
+			</div>
+			{% elif imgs|length == 1 %}
+			<div class="card-image-container">
+				{% for img in imgs %}
+				<img src="{{ img.image.url }}" class="w-100 h-100" alt="{{ achievement.title }}" draggable="false" loading="lazy" decoding="async" onclick="openImageModal('{{ img.image.url }}')">
+				<div class="image-overlay"></div>
+				{% endfor %}
+			</div>
+			{% else %}
+			<div class="card-image-container bg-primary bg-opacity-10 d-flex align-items-center justify-content-center">
+				<i class="fas fa-image text-primary" style="font-size: 4rem; color: #1e40af !important;"></i>
+			</div>
+			{% endif %}
+			{% endwith %}
+
+			<!-- Content -->
+			<div class="card-body-custom">
+				<h5 class="achievement-title">{{ achievement.title }}</h5>
+				<p class="achievement-description">{{ achievement.description|truncatewords:25 }}</p>
+			</div>
+			
+			<!-- Footer -->
+			<div class="card-footer-custom">
+				<div class="d-flex justify-content-between align-items-center">
+					<div class="location-info">
+						<i class="fas fa-map-marker-alt"></i>
+						<span>{{ achievement.title|truncatechars:30 }}</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	{% endfor %}
+</div>
+{% else %}
+<div class="text-center py-5">
+	<div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" 
+		 style="width: 100px; height: 100px;">
+		<i class="fas fa-trophy text-primary" style="font-size: 3rem; color: #1e40af !important;"></i>
+	</div>
+	<h4 class="text-muted mb-3">لا توجد إنجازات حالياً</h4>
+	<p class="text-muted mb-4">سيتم إضافة الإنجازات والمشاريع قريباً</p>
+</div>
+{% endif %}
+
+{# Pagination controls #}
+{% if page_obj and page_obj.paginator.num_pages > 1 %}
+<nav aria-label="صفحات الإنجازات" class="mt-4">
+	<ul class="pagination justify-content-center">
+		{# preserve filters in querystring #}
+		{% with area_q=selected_area|default_if_none:'' village_q=selected_village|default_if_none:'' %}
+			<li class="page-item {% if not page_obj.has_previous %}disabled{% endif %}">
+				<a class="page-link" href="?page=1{% if area_q %}&area={{ area_q|urlencode }}{% endif %}{% if village_q %}&village={{ village_q|urlencode }}{% endif %}">الأولى</a>
+			</li>
+			<li class="page-item {% if not page_obj.has_previous %}disabled{% endif %}">
+				<a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if area_q %}&area={{ area_q|urlencode }}{% endif %}{% if village_q %}&village={{ village_q|urlencode }}{% endif %}" aria-label="السابق">
+					<span aria-hidden="true">&laquo;</span>
+				</a>
+			</li>
+			{# page range #}
+			{% for num in page_obj.paginator.page_range %}
+				{% if num >= page_obj.number|add:'-2' and num <= page_obj.number|add:'2' %}
+				<li class="page-item {% if page_obj.number == num %}active{% endif %}">
+					<a class="page-link" href="?page={{ num }}{% if area_q %}&area={{ area_q|urlencode }}{% endif %}{% if village_q %}&village={{ village_q|urlencode }}{% endif %}">{{ num }}</a>
+				</li>
+				{% endif %}
+			{% endfor %}
+			<li class="page-item {% if not page_obj.has_next %}disabled{% endif %}">
+				<a class="page-link" href="?page={{ page_obj.next_page_number }}{% if area_q %}&area={{ area_q|urlencode }}{% endif %}{% if village_q %}&village={{ village_q|urlencode }}{% endif %}" aria-label="التالي">
+					<span aria-hidden="true">&raquo;</span>
+				</a>
+			</li>
+			<li class="page-item {% if not page_obj.has_next %}disabled{% endif %}">
+				<a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if area_q %}&area={{ area_q|urlencode }}{% endif %}{% if village_q %}&village={{ village_q|urlencode }}{% endif %}">الأخيرة</a>
+			</li>
+		{% endwith %}
+	</ul>
+</nav>
+{% endif %}
+
+<div class="text-center mt-4">
+	<a href="{% url 'home' %}" class="btn btn-outline-primary" style="border-color: #1e40af; color: #1e40af;">
+		<i class="fas fa-home me-2"></i>
+	العودة للرئيسية
+	</a>
+</div>
+
+{# Modal for lightbox #}
+<div class="modal fade achievement-modal" id="achievementModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="true">
+	<div class="modal-dialog modal-dialog-centered modal-lg">
+		<div class="modal-content">
+			<button type="button" class="btn-close btn-close-white ms-auto m-2" data-bs-dismiss="modal" aria-label="Close"></button>
+			<div class="modal-body p-2 text-center">
+					<img id="achievementModalImage" src="" alt="Achievement image" class="img-fluid rounded" loading="lazy" decoding="async">
+			</div>
+		</div>
+	</div>
+</div>
+
+{# Modal for achievement details #}
+<div class="modal fade" id="detailsModal" tabindex="-1" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="detailsModalTitle">تفاصيل الإنجاز</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<p id="detailsModalDescription"></p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+console.log('=== ACHIEVEMENTS SCRIPT STARTED ===');
+
+// Global functions for achievements
+function openImageModal(imageUrl) {
+    console.log('Opening image modal for:', imageUrl);
+    
+    const modal = document.getElementById('achievementModal');
+    const modalImg = document.getElementById('achievementModalImage');
+    const closeBtn = modal ? modal.querySelector('[data-bs-dismiss="modal"]') : null;
+    
+    if (modal && modalImg) {
+        modalImg.src = imageUrl;
+        
+        // Try Bootstrap modal first
+        try {
+            if (window.bootstrap && window.bootstrap.Modal) {
+                const bsModal = new window.bootstrap.Modal(modal);
+                bsModal.show();
+                console.log('Bootstrap modal shown successfully');
+            } else {
+                // Fallback
+                document.body.classList.add('modal-open');
+                modal.style.display = 'block';
+                modal.classList.add('show');
+                modal.style.position = 'fixed';
+                modal.style.top = '0';
+                modal.style.right = '0';
+                modal.style.bottom = '0';
+                modal.style.left = '0';
+                modal.style.backgroundColor = 'rgba(0,0,0,0.5)';
+                modal.style.zIndex = '1050';
+                if (closeBtn) {
+                    const handler = function() {
+                        modal.style.display = 'none';
+                        modal.classList.remove('show');
+                        document.body.classList.remove('modal-open');
+                        closeBtn.removeEventListener('click', handler);
+                    };
+                    closeBtn.addEventListener('click', handler);
+                }
+                console.log('Fallback modal shown');
+            }
+        } catch (error) {
+            console.error('Error showing modal:', error);
+            // Simple fallback
+            document.body.classList.add('modal-open');
+            modal.style.display = 'block';
+            modal.classList.add('show');
+            modal.style.position = 'fixed';
+            modal.style.top = '0';
+            modal.style.right = '0';
+            modal.style.bottom = '0';
+            modal.style.left = '0';
+            modal.style.backgroundColor = 'rgba(0,0,0,0.5)';
+            modal.style.zIndex = '1050';
+            if (closeBtn) {
+                const handler = function() {
+                    modal.style.display = 'none';
+                    modal.classList.remove('show');
+                    document.body.classList.remove('modal-open');
+                    closeBtn.removeEventListener('click', handler);
+                };
+                closeBtn.addEventListener('click', handler);
+            }
+        }
+    } else {
+        console.error('Modal elements not found');
+    }
+}
+
+function showAchievementDetails(id, title, description) {
+    console.log('Showing details for achievement:', id, title);
+    
+    const modal = document.getElementById('detailsModal');
+    const modalTitle = document.getElementById('detailsModalTitle');
+    const modalDescription = document.getElementById('detailsModalDescription');
+    
+    if (modal && modalTitle && modalDescription) {
+        modalTitle.textContent = title;
+        modalDescription.textContent = description;
+        
+        // Try Bootstrap modal first
+        try {
+            if (window.bootstrap && window.bootstrap.Modal) {
+                const bsModal = new window.bootstrap.Modal(modal);
+                bsModal.show();
+                console.log('Details modal shown successfully');
+            } else {
+                // Fallback
+                modal.style.display = 'block';
+                modal.classList.add('show');
+                modal.style.backgroundColor = 'rgba(0,0,0,0.5)';
+                console.log('Fallback details modal shown');
+            }
+        } catch (error) {
+            console.error('Error showing details modal:', error);
+            // Simple fallback
+            modal.style.display = 'block';
+            modal.classList.add('show');
+            modal.style.backgroundColor = 'rgba(0,0,0,0.5)';
+        }
+    } else {
+        console.error('Details modal elements not found');
+    }
+}
+
+// Wait for page to load
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM loaded, setting up achievements...');
+    
+    // Add touch/swipe support for carousels
+    const carousels = document.querySelectorAll('.carousel');
+    carousels.forEach(carousel => {
+        let startX = 0;
+        let endX = 0;
+        
+        carousel.addEventListener('touchstart', function(e) {
+            startX = e.touches[0].clientX;
+        });
+        
+        carousel.addEventListener('touchend', function(e) {
+            endX = e.changedTouches[0].clientX;
+            handleSwipe(carousel, startX, endX);
+        });
+    });
+    
+    function handleSwipe(carousel, startX, endX) {
+        const threshold = 50;
+        const diff = startX - endX;
+        
+        if (Math.abs(diff) > threshold) {
+            if (diff > 0) {
+                // Swipe left - next
+                const nextBtn = carousel.querySelector('.carousel-control-next');
+                if (nextBtn) nextBtn.click();
+            } else {
+                // Swipe right - previous
+                const prevBtn = carousel.querySelector('.carousel-control-prev');
+                if (prevBtn) prevBtn.click();
+            }
+        }
+    }
+    
+    console.log('Achievements script setup complete!');
+});
+
+console.log('=== ACHIEVEMENTS SCRIPT LOADED ===');
+</script>
+{% endblock %}
+

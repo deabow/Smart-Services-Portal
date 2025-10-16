@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+
+{% block title %}إنشاء حساب جديد - خدمة المواطنين{% endblock %}
+
+{% block page_indicator %}
+<div class="page-indicator">
+	<i class="fas fa-user-plus"></i> إنشاء حساب جديد - الموقع الرسمي للنائب احمد ابوزيد
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+	<div class="col-md-8 col-lg-6">
+		<div class="card border-0 shadow-sm">
+			<div class="card-body p-5">
+				<div class="text-center mb-4">
+					<div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" 
+						 style="width: 80px; height: 80px;">
+						<i class="fas fa-user-plus text-primary" style="font-size: 2rem; color: #1e40af !important;"></i>
+					</div>
+					<h3 class="card-title" style="color: #1e40af;">إنشاء حساب جديد</h3>
+					<p class="text-muted">أدخل بياناتك لإنشاء حساب في خدمة المواطنين</p>
+				</div>
+
+				<form method="post">
+					{% csrf_token %}
+					
+					<div class="row">
+						<div class="col-md-6 mb-3">
+							<label for="id_username" class="form-label fw-bold" style="color: #1e40af;">اسم المستخدم *</label>
+							<div class="input-group">
+								<span class="input-group-text bg-light border-end-0">
+									<i class="fas fa-user text-muted"></i>
+								</span>
+								<input type="text" class="form-control border-start-0" id="id_username" name="username" 
+									   placeholder="أدخل اسم المستخدم" value="{{ form_data.username|default:'' }}" required>
+							</div>
+							<div class="form-text">اسم المستخدم يجب أن يكون فريداً</div>
+						</div>
+
+						<div class="col-md-6 mb-3">
+							<label for="id_email" class="form-label fw-bold" style="color: #1e40af;">البريد الإلكتروني *</label>
+							<div class="input-group">
+								<span class="input-group-text bg-light border-end-0">
+									<i class="fas fa-envelope text-muted"></i>
+								</span>
+								<input type="email" class="form-control border-start-0" id="id_email" name="email" 
+									   placeholder="أدخل البريد الإلكتروني" value="{{ form_data.email|default:'' }}" required>
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-md-6 mb-3">
+							<label for="id_full_name" class="form-label fw-bold" style="color: #1e40af;">الاسم الكامل *</label>
+							<div class="input-group">
+								<span class="input-group-text bg-light border-end-0">
+									<i class="fas fa-id-card text-muted"></i>
+								</span>
+								<input type="text" class="form-control border-start-0" id="id_full_name" name="full_name" 
+									   placeholder="أدخل الاسم الكامل" value="{{ form_data.full_name|default:'' }}" required>
+							</div>
+						</div>
+
+						<div class="col-md-6 mb-3">
+							<label for="id_phone" class="form-label fw-bold" style="color: #1e40af;">رقم الهاتف *</label>
+							<div class="input-group">
+								<span class="input-group-text bg-light border-end-0">
+									<i class="fas fa-phone text-muted"></i>
+								</span>
+								<input type="tel" class="form-control border-start-0" id="id_phone" name="phone" 
+									   placeholder="أدخل رقم الهاتف (مثال: 0123456789)" value="{{ form_data.phone|default:'' }}" 
+									   pattern="[0-9]{10,11}" title="أدخل رقم هاتف صحيح من 10-11 رقم" required>
+							</div>
+						</div>
+					</div>
+
+					<div class="mb-3">
+						<label for="id_address" class="form-label fw-bold" style="color: #1e40af;">العنوان *</label>
+						<div class="input-group">
+							<span class="input-group-text bg-light border-end-0">
+								<i class="fas fa-map-marker-alt text-muted"></i>
+							</span>
+							<input type="text" class="form-control border-start-0" id="id_address" name="address" 
+								   placeholder="أدخل العنوان" value="{{ form_data.address|default:'' }}" required>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-md-6 mb-3">
+							<label for="id_password1" class="form-label fw-bold" style="color: #1e40af;">كلمة المرور *</label>
+							<div class="input-group">
+								<span class="input-group-text bg-light border-end-0">
+									<i class="fas fa-lock text-muted"></i>
+								</span>
+								<input type="password" class="form-control border-start-0" id="id_password1" name="password1" 
+									   placeholder="أدخل كلمة المرور" required>
+							</div>
+							<div class="form-text">كلمة المرور يجب أن تكون 8 أحرف على الأقل</div>
+						</div>
+
+						<div class="col-md-6 mb-4">
+							<label for="id_password2" class="form-label fw-bold" style="color: #1e40af;">تأكيد كلمة المرور *</label>
+							<div class="input-group">
+								<span class="input-group-text bg-light border-end-0">
+									<i class="fas fa-lock text-muted"></i>
+								</span>
+								<input type="password" class="form-control border-start-0" id="id_password2" name="password2" 
+									   placeholder="أعد إدخال كلمة المرور" required>
+							</div>
+						</div>
+					</div>
+
+					{% if errors %}
+					<div class="alert alert-danger" role="alert">
+						<i class="fas fa-exclamation-triangle me-2"></i>
+						يرجى تصحيح الأخطاء التالية:
+						<ul class="mb-0 mt-2">
+							{% for error in errors %}
+								<li>{{ error }}</li>
+							{% endfor %}
+						</ul>
+					</div>
+					{% endif %}
+
+					<div class="d-grid">
+						<button type="submit" class="btn btn-primary btn-lg">
+							<i class="fas fa-user-plus me-2"></i>
+							إنشاء الحساب
+						</button>
+					</div>
+				</form>
+
+				<hr class="my-4">
+
+				<div class="text-center">
+					<p class="text-muted mb-0">لديك حساب بالفعل؟</p>
+					<a href="{% url 'login' %}" class="btn btn-outline-primary mt-2" style="border-color: #1e40af; color: #1e40af;">
+						<i class="fas fa-sign-in-alt me-2"></i>
+						تسجيل الدخول
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}
+

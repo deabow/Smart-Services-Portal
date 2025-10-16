@@ -1,0 +1,33 @@
+# Django project .gitignore
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtual environments
+venv/
+env/
+.venv/
+
+# SQLite databases (Django dev DB / migration cache)
+*.sqlite3
+db.sqlite3
+
+# Environment files
+.env
+*.env
+
+# Logs
+*.log
+
+# IDE / Editor
+.vscode/
+.idea/
+*.suo
+*.user
+
+# Collected static and uploaded media
+staticfiles/
+media/
+

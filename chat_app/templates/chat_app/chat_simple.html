@@ -1,0 +1,311 @@
+{% extends 'base.html' %}
+
+{% block title %}الدردشة - النائب أحمد أبو زيد{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- شريط جانبي للمعلومات -->
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">💬 الدردشة</h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <div class="chat-avatar">
+                            <i class="fas fa-comments fa-3x text-primary"></i>
+                        </div>
+                        <h6 class="mt-2">خدمة الدردشة</h6>
+                        <small class="text-muted">تواصل مع الإدارة</small>
+                    </div>
+                    
+                    <div class="help-section">
+                        <h6 class="text-primary">💡 يمكنك:</h6>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check text-success"></i> التواصل مع الإدارة</li>
+                            <li><i class="fas fa-check text-success"></i> طرح استفساراتك</li>
+                            <li><i class="fas fa-check text-success"></i> طلب المساعدة</li>
+                            <li><i class="fas fa-check text-success"></i> متابعة طلباتك</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="alert alert-info mt-3">
+                        <i class="fas fa-info-circle me-2"></i>
+                        سيقوم أحد أعضاء الفريق بالرد عليك قريباً.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- منطقة الدردشة الرئيسية -->
+        <div class="col-md-9">
+            <div class="card">
+                <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-comments me-2"></i>الدردشة مع الإدارة
+                    </h5>
+                    <div class="d-flex align-items-center">
+                        <span class="badge bg-light text-dark me-2" id="messageCount">0 رسالة</span>
+                        <button class="btn btn-light btn-sm" onclick="refreshMessages()">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="card-body p-0">
+                    <!-- منطقة الرسائل -->
+                    <div class="chat-messages" id="chatMessages" style="height: 500px; overflow-y: auto; padding: 20px;">
+                        {% for message in messages %}
+                        <div class="message {% if message.message_type == 'user' %}user-message{% elif message.message_type == 'admin' %}admin-message{% else %}system-message{% endif %}">
+                            <div class="message-header">
+                                {% if message.message_type == 'user' %}
+                                    <i class="fas fa-user me-1"></i>أنت
+                                {% elif message.message_type == 'admin' %}
+                                    <i class="fas fa-user-shield me-1"></i>الإدارة
+                                {% else %}
+                                    <i class="fas fa-info-circle me-1"></i>النظام
+                                {% endif %}
+                                <small class="text-muted ms-2">{{ message.created_at|date:"H:i" }}</small>
+                            </div>
+                            <div class="message-content">{{ message.content|linebreaks }}</div>
+                        </div>
+                        {% endfor %}
+                        
+                        {% for admin_message in admin_messages %}
+                        <div class="message admin-message">
+                            <div class="message-header">
+                                <i class="fas fa-user-shield me-1"></i>الإدارة
+                                <small class="text-muted ms-2">{{ admin_message.created_at|date:"H:i" }}</small>
+                                {% if admin_message.is_important %}
+                                <span class="badge bg-warning ms-2">مهم</span>
+                                {% endif %}
+                            </div>
+                            <div class="message-content">{{ admin_message.content|linebreaks }}</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <!-- منطقة إدخال الرسالة -->
+                    <div class="chat-input p-3 border-top">
+                        <form id="messageForm">
+                            {% csrf_token %}
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="messageInput" 
+                                       placeholder="اكتب رسالتك هنا..." required>
+                                <button class="btn btn-primary" type="submit">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.chat-messages {
+    background: #f8f9fa;
+}
+
+.message {
+    margin-bottom: 15px;
+    padding: 10px 15px;
+    border-radius: 15px;
+    max-width: 80%;
+    word-wrap: break-word;
+}
+
+.user-message {
+    background: #007bff;
+    color: white;
+    margin-left: auto;
+    border-bottom-right-radius: 5px;
+}
+
+.admin-message {
+    background: #28a745;
+    color: white;
+    margin-right: auto;
+    border-bottom-left-radius: 5px;
+}
+
+.system-message {
+    background: #6c757d;
+    color: white;
+    margin: 0 auto;
+    text-align: center;
+    border-radius: 20px;
+}
+
+.message-header {
+    font-size: 0.8rem;
+    margin-bottom: 5px;
+    opacity: 0.8;
+}
+
+.message-content {
+    font-size: 1rem;
+    line-height: 1.4;
+}
+
+.chat-avatar {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+.help-section {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+}
+
+.quick-actions .btn {
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+}
+
+#messageInput:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.btn-primary {
+    background: linear-gradient(45deg, #007bff, #0056b3);
+    border: none;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(45deg, #0056b3, #004085);
+}
+</style>
+
+<script>
+let messageCount = 0;
+
+// إرسال الرسالة
+document.getElementById('messageForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const messageInput = document.getElementById('messageInput');
+    const content = messageInput.value.trim();
+    
+    if (!content) return;
+    
+    // إرسال الرسالة
+    fetch('{% url "chat:send_message" %}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        },
+        body: JSON.stringify({ content: content })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // إضافة الرسالة للواجهة
+            addMessageToChat(data.user_message, 'user');
+            messageInput.value = '';
+            messageCount++;
+            updateMessageCount();
+        } else {
+            alert('خطأ في إرسال الرسالة: ' + data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('خطأ في الاتصال');
+    });
+});
+
+function addMessageToChat(message, senderType) {
+    const chatMessages = document.getElementById('chatMessages');
+    const messageDiv = document.createElement('div');
+    
+    let messageClass = 'system-message';
+    let icon = 'fas fa-info-circle';
+    let sender = 'النظام';
+    
+    if (senderType === 'user') {
+        messageClass = 'user-message';
+        icon = 'fas fa-user';
+        sender = 'أنت';
+    } else if (senderType === 'admin') {
+        messageClass = 'admin-message';
+        icon = 'fas fa-user-shield';
+        sender = 'الإدارة';
+    }
+    
+    messageDiv.className = `message ${messageClass}`;
+    messageDiv.innerHTML = `
+        <div class="message-header">
+            <i class="${icon} me-1"></i>${sender}
+            <small class="text-muted ms-2">${new Date(message.created_at).toLocaleTimeString('ar-SA', {hour: '2-digit', minute: '2-digit'})}</small>
+        </div>
+        <div class="message-content">${message.content.replace(/\n/g, '<br>')}</div>
+    `;
+    
+    chatMessages.appendChild(messageDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function refreshMessages() {
+    fetch('{% url "chat:get_messages" %}')
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const chatMessages = document.getElementById('chatMessages');
+            chatMessages.innerHTML = '';
+            
+            data.messages.forEach(message => {
+                addMessageToChat(message, message.sender_type);
+            });
+            
+            messageCount = data.messages.length;
+            updateMessageCount();
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+
+function updateMessageCount() {
+    document.getElementById('messageCount').textContent = `${messageCount} رسالة`;
+}
+
+// تحديث تلقائي كل 5 ثوان
+setInterval(refreshMessages, 5000);
+
+// تحديث عدد الرسائل عند التحميل
+document.addEventListener('DOMContentLoaded', function() {
+    refreshMessages();
+});
+</script>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+
+{% block title %}تفاصيل الطلب - {{ request_obj.title }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- عنوان الصفحة -->
+            <div class="page-indicator mb-4">
+                <i class="fas fa-file-alt"></i>
+                تفاصيل طلبي
+            </div>
+
+            <!-- بطاقة تفاصيل الطلب -->
+            <div class="card shadow-lg border-0 mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">
+                        <i class="fas fa-file-alt me-2"></i>
+                        {{ request_obj.title }}
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <!-- حالة الطلب -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h5 class="fw-bold mb-3">📊 حالة الطلب</h5>
+                            {% if request_obj.status %}
+                                <div class="d-flex align-items-center">
+                                    <span class="badge fs-6 px-3 py-2 me-3" 
+                                          style="background-color: {{ request_obj.status.color }}; color: white;">
+                                        {{ request_obj.status.name }}
+                                    </span>
+                                    {% if request_obj.status.description %}
+                                        <small class="text-muted">{{ request_obj.status.description }}</small>
+                                    {% endif %}
+                                </div>
+                            {% else %}
+                                <span class="badge bg-secondary fs-6 px-3 py-2">غير محدد</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- معلومات الطلب -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h5 class="fw-bold mb-3">📝 تفاصيل الطلب</h5>
+                            <p class="text-muted">{{ request_obj.description }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h5 class="fw-bold mb-3">🔍 معلومات التتبع</h5>
+                            <div class="bg-light p-3 rounded">
+                                <strong>رقم التتبع:</strong>
+                                <code class="fs-5 text-primary">{{ request_obj.tracking_number }}</code>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- معلومات مقدم الطلب -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h5 class="fw-bold mb-3">👤 معلوماتي</h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p><strong>الاسم الكامل:</strong> {{ request_obj.full_name }}</p>
+                                    <p><strong>رقم الهاتف:</strong> {{ request_obj.phone }}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong>العنوان:</strong> {{ request_obj.address }}</p>
+                                    <p><strong>تاريخ التقديم:</strong> {{ request_obj.created_at|date:"Y/m/d" }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- المرفقات -->
+                    {% if request_obj.attachments.all %}
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h5 class="fw-bold mb-3">📎 المرفقات</h5>
+                            <div class="row g-3">
+                                {% for attachment in request_obj.attachments.all %}
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="card border-0 shadow-sm">
+                                        <div class="card-body text-center">
+                                            <i class="fas fa-file fa-2x text-primary mb-2"></i>
+                                            <p class="mb-2 small text-truncate">{{ attachment.file_path.name|slice:"-20:" }}</p>
+                                            <a href="{{ attachment.file_path.url }}" target="_blank" 
+                                               class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-download me-1"></i>
+                                                تحميل
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- تاريخ آخر تحديث -->
+                    {% if request_obj.updated_at != request_obj.created_at %}
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                <strong>آخر تحديث:</strong> {{ request_obj.updated_at|date:"Y/m/d H:i" }}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- أزرار الإجراءات -->
+            <div class="text-center">
+                <a href="{% url 'requests:list' %}" class="btn btn-secondary me-2">
+                    <i class="fas fa-arrow-right me-1"></i>
+                    العودة لطلباتي
+                </a>
+                <a href="{% url 'requests:create' %}" class="btn btn-primary">
+                    <i class="fas fa-plus me-1"></i>
+                    طلب جديد
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
