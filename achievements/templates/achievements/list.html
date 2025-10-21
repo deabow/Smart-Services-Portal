@@ -277,9 +277,9 @@
 			</label>
 			<select name="area" id="area" class="filter-select" onchange="updateVillages()">
 				<option value="">جميع المناطق</option>
-				{% for area in areas %}
-				<option value="{{ area.0 }}" {% if selected_area == area.0 %}selected{% endif %}>
-					{{ area.1 }}
+				{% for area_code, area_name in areas %}
+				<option value="{{ area_code }}" {% if selected_area == area_code %}selected{% endif %}>
+					{{ area_name }}
 				</option>
 				{% endfor %}
 			</select>
@@ -292,9 +292,9 @@
 			</label>
 			<select name="village" id="village" class="filter-select">
 				<option value="">جميع القرى</option>
-				{% for village in villages %}
-				<option value="{{ village.0 }}" {% if selected_village == village.0 %}selected{% endif %}>
-					{{ village.1 }}
+				{% for village_code, village_name in villages %}
+				<option value="{{ village_code }}" {% if selected_village == village_code %}selected{% endif %}>
+					{{ village_name }}
 				</option>
 				{% endfor %}
 			</select>
@@ -458,15 +458,21 @@ function updateVillages() {
 	villageSelect.innerHTML = '<option value="">جميع القرى</option>';
 	
 	// Village data from Django context
-	const villageChoices = JSON.parse('{{ village_choices|escapejs }}');
-	
-	if (selectedArea && villageChoices[selectedArea]) {
-		villageChoices[selectedArea].forEach(function(village) {
-			const option = document.createElement('option');
-			option.value = village[0];
-			option.textContent = village[1];
-			villageSelect.appendChild(option);
-		});
+	try {
+		const villageChoices = JSON.parse('{{ village_choices|escapejs }}');
+		
+		if (selectedArea && villageChoices[selectedArea]) {
+			villageChoices[selectedArea].forEach(function(village) {
+				const option = document.createElement('option');
+				option.value = village[0];
+				option.textContent = village[1];
+				villageSelect.appendChild(option);
+			});
+		}
+	} catch (error) {
+		console.error('Error parsing village choices:', error);
+		// Fallback: reload the page to get fresh data
+		window.location.reload();
 	}
 }
 

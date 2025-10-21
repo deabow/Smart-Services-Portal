@@ -13,8 +13,8 @@ from .models import Achievement, AREAS, VILLAGES
 
 def achievements_list_view(request: HttpRequest) -> HttpResponse:
 	try:
-		area = request.GET.get("area")
-		village = request.GET.get("village")
+		area = request.GET.get("area", "").strip()
+		village = request.GET.get("village", "").strip()
 		
 		# Simple query first to ensure it works
 		achievements_qs = (
@@ -23,16 +23,19 @@ def achievements_list_view(request: HttpRequest) -> HttpResponse:
 			.order_by("-created_at")
 		)
 		
-		# Apply filters
-		if area:
+		# Apply filters with validation
+		if area and area in [a[0] for a in AREAS]:
 			achievements_qs = achievements_qs.filter(area=area)
-			if village:
+			if village and village in [v[0] for v in VILLAGES.get(area, [])]:
 				achievements_qs = achievements_qs.filter(village=village)
 		
 		# Get available villages for selected area
 		available_villages = []
 		if area and area in VILLAGES:
 			available_villages = VILLAGES[area]
+		else:
+			# If no area selected, show all villages
+			available_villages = []
 		
 		# Pagination with error handling
 		paginator = Paginator(achievements_qs, 12)
@@ -47,25 +50,30 @@ def achievements_list_view(request: HttpRequest) -> HttpResponse:
 		import json
 		context = {
 			"page_obj": page_obj,
-			"areas": [a for a, _ in AREAS],
+			"areas": AREAS,
 			"villages": available_villages,
 			"selected_area": area,
 			"selected_village": village,
-			"village_choices": json.dumps(VILLAGES),
+			"village_choices": json.dumps(VILLAGES, ensure_ascii=False),
 		}
 		
 		return render(request, "achievements/list.html", context)
 		
 	except Exception as e:
+		# Log the error for debugging
+		import logging
+		logger = logging.getLogger(__name__)
+		logger.error(f"Error in achievements_list_view: {str(e)}")
+		
 		# Fallback context in case of any error
 		import json
 		context = {
 			"page_obj": None,
-			"areas": [a for a, _ in AREAS],
+			"areas": AREAS,
 			"villages": [],
 			"selected_area": None,
 			"selected_village": None,
-			"village_choices": json.dumps(VILLAGES),
+			"village_choices": json.dumps(VILLAGES, ensure_ascii=False),
 		}
 		return render(request, "achievements/list.html", context)
 
