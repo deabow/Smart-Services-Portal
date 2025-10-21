@@ -1,0 +1,558 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}إدارة المحادثة - {{ chat_room.user.username }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .admin-chat-container {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px;
+    }
+    
+    .chat-header {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+    
+    .chat-messages {
+        background: white;
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        height: 500px;
+        overflow-y: auto;
+    }
+    
+    .message {
+        margin-bottom: 15px;
+        padding: 15px;
+        border-radius: 15px;
+        max-width: 80%;
+        word-wrap: break-word;
+    }
+    
+    .message.user {
+        background: #e3f2fd;
+        margin-left: auto;
+        border-bottom-right-radius: 5px;
+    }
+    
+    .message.bot {
+        background: #f3e5f5;
+        margin-right: auto;
+        border-bottom-left-radius: 5px;
+    }
+    
+    .message.admin {
+        background: #fff3e0;
+        margin-right: auto;
+        border-bottom-left-radius: 5px;
+        border-left: 4px solid #ff9800;
+    }
+    
+    .message.system {
+        background: #e8f5e8;
+        margin: 0 auto;
+        text-align: center;
+        border-radius: 20px;
+    }
+    
+    .message-header {
+        font-size: 0.8rem;
+        color: #666;
+        margin-bottom: 5px;
+    }
+    
+    .message-content {
+        font-size: 1rem;
+        line-height: 1.4;
+    }
+    
+    .message-time {
+        font-size: 0.7rem;
+        color: #999;
+        margin-top: 5px;
+    }
+    
+    .admin-input {
+        background: white;
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+    .quick-replies {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 12px 0 8px 0;
+    }
+    .quick-reply-btn {
+        background: #f1f5f9;
+        color: #0f172a;
+        border: 1px solid #e2e8f0;
+        border-radius: 999px;
+        padding: 6px 10px;
+        font-size: 0.9rem;
+        cursor: pointer;
+    }
+    .quick-reply-btn:hover { background: #e2e8f0; }
+    .shortcut-hint { color:#6b7280; font-size: .85rem; }
+    .slash-suggest {
+        position: absolute; background: #ffffff; border: 1px solid #e5e7eb; border-radius: 8px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.08); padding: 8px; min-width: 220px; z-index: 30;
+    }
+    .slash-suggest-item { padding: 6px 8px; border-radius: 6px; cursor: pointer; }
+    .slash-suggest-item:hover, .slash-suggest-item.active { background:#f3f4f6; }
+    
+    .btn-send {
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 25px;
+        font-weight: bold;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-send:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        color: white;
+    }
+    
+    .message-type-badge {
+        font-size: 0.7rem;
+        padding: 2px 8px;
+        border-radius: 10px;
+        margin-left: 5px;
+    }
+    
+    .urgent-badge {
+        background: #ff6b6b;
+        color: white;
+    }
+    
+    .important-badge {
+        background: #ff9800;
+        color: white;
+    }
+    
+    .user-info {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+    
+    .typing-indicator {
+        display: none;
+        padding: 10px;
+        color: #666;
+        font-style: italic;
+    }
+    
+    .admin-message-form {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 20px;
+        margin-top: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-chat-container">
+    <div class="container-fluid">
+        <!-- Header -->
+        <div class="chat-header">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h2><i class="fas fa-comments me-2"></i>إدارة المحادثة</h2>
+                    <div class="user-info">
+                        <h5>{{ chat_room.user.username }}</h5>
+                        <p class="mb-1"><strong>الاسم الكامل:</strong> {{ chat_room.user.full_name|default:"غير محدد" }}</p>
+                        <p class="mb-1"><strong>البريد الإلكتروني:</strong> {{ chat_room.user.email }}</p>
+                        <p class="mb-0"><strong>حالة المحادثة:</strong> 
+                            {% if chat_room.is_active %}
+                                <span class="badge bg-success">نشطة</span>
+                            {% else %}
+                                <span class="badge bg-secondary">غير نشطة</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-4 text-end">
+                    <a href="{% url 'chat:admin_dashboard' %}" class="btn btn-outline-primary me-2">
+                        <i class="fas fa-arrow-left me-1"></i>العودة للوحة التحكم
+                    </a>
+                    <button class="btn btn-success" onclick="refreshMessages()">
+                        <i class="fas fa-sync-alt me-1"></i>تحديث
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Messages -->
+        <div class="chat-messages" id="chatMessages">
+            {% for message in messages %}
+            <div class="message {{ message.message_type }}">
+                <div class="message-header">
+                    {% if message.message_type == 'user' %}
+                        <i class="fas fa-user me-1"></i>المستخدم
+                    {% elif message.message_type == 'bot' %}
+                        <i class="fas fa-robot me-1"></i>البوت الذكي
+                    {% elif message.message_type == 'admin' %}
+                        <i class="fas fa-user-shield me-1"></i>الإدارة
+                    {% else %}
+                        <i class="fas fa-cog me-1"></i>النظام
+                    {% endif %}
+                </div>
+                <div class="message-content">{{ message.content|linebreaks }}</div>
+                <div class="message-time">{{ message.created_at|date:"Y-m-d H:i:s" }}</div>
+            </div>
+            {% endfor %}
+            
+            {% for admin_message in admin_messages %}
+            <div class="message admin">
+                <div class="message-header">
+                    <i class="fas fa-user-shield me-1"></i>الإدارة
+                    <span class="message-type-badge {{ admin_message.message_type }}">
+                        {{ admin_message.get_message_type_display }}
+                    </span>
+                    {% if admin_message.is_important %}
+                    <span class="message-type-badge important-badge">مهم</span>
+                    {% endif %}
+                </div>
+                <div class="message-content">{{ admin_message.content|linebreaks }}</div>
+                <div class="message-time">
+                    {{ admin_message.created_at|date:"Y-m-d H:i:s" }}
+                    - {{ admin_message.admin_user.username }}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Admin Message Form -->
+        <div class="admin-input">
+            <h5><i class="fas fa-edit me-2"></i>إرسال رد إداري</h5>
+            <form id="adminMessageForm">
+                {% csrf_token %}
+                <input type="hidden" id="chatRoomId" value="{{ chat_room.id }}">
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="messageType" class="form-label">نوع الرسالة</label>
+                        <select class="form-select" id="messageType" name="message_type">
+                            <option value="admin">إداري عادي</option>
+                            <option value="admin_urgent">إداري عاجل</option>
+                            <option value="admin_info">معلومات إدارية</option>
+                            <option value="admin_help">مساعدة إدارية</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-check mt-4">
+                            <input class="form-check-input" type="checkbox" id="isImportant" name="is_important">
+                            <label class="form-check-label" for="isImportant">
+                                رسالة مهمة
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-2">
+                    <div class="quick-replies" id="quickReplies"></div>
+                </div>
+                <div class="mb-1 position-relative">
+                    <label for="messageContent" class="form-label">محتوى الرسالة</label>
+                    <textarea class="form-control" id="messageContent" name="content" rows="4" 
+                              placeholder="اكتب ردك الإداري هنا... (Ctrl+Enter للإرسال، Alt+رقم لاختصار)" required></textarea>
+                    <div id="slashSuggest" class="slash-suggest d-none"></div>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span class="shortcut-hint"><i class="far fa-keyboard ms-1"></i>اختصارات: Ctrl+Enter إرسال • Alt+1..9 قوالب • اكتب / للأوامر</span>
+                </div>
+                
+                <div class="text-end">
+                    <button type="submit" class="btn btn-send">
+                        <i class="fas fa-paper-plane me-2"></i>إرسال الرد الإداري
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+// إرسال الرسالة الإدارية
+document.getElementById('adminMessageForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const data = {
+        chat_room_id: document.getElementById('chatRoomId').value,
+        content: formData.get('content'),
+        message_type: formData.get('message_type'),
+        is_important: formData.get('is_important') === 'on'
+    };
+    
+    fetch('{% url "chat:admin_send_message" %}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // إضافة الرسالة الجديدة للواجهة
+            addMessageToChat(data.message);
+            // مسح النموذج
+            document.getElementById('adminMessageForm').reset();
+            // إظهار رسالة نجاح
+            showNotification('تم إرسال الرسالة الإدارية بنجاح', 'success');
+        } else {
+            showNotification('خطأ في إرسال الرسالة: ' + data.error, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showNotification('خطأ في الاتصال', 'error');
+    });
+});
+
+// قوالب جاهزة واختصارات
+const QUICK_TEMPLATES = [
+    { key: '1', text: 'تم استلام رسالتك وجاري المراجعة خلال 24 ساعة بإذن الله.' },
+    { key: '2', text: 'من فضلك أرسل رقم الطلب أو رقم الهاتف للتواصل بشكل أسرع.' },
+    { key: '3', text: 'تم تحويل طلبك إلى الجهة المختصة، وسنوافيك بالتحديثات قريبًا.' },
+    { key: '4', text: 'برجاء تزويدنا بالمستندات المطلوبة بصيغة واضحة.' },
+    { key: '5', text: 'شكراً لتواصلك، هل لديك أي استفسار إضافي؟' },
+    { key: '6', text: 'تم حل المشكلة. إذا ظهرت أي مشكلة أخرى أخبرنا.' },
+    { key: '7', text: 'عذرًا على التأخير، نعمل على إنهاء طلبك في أسرع وقت.' },
+    { key: '8', text: 'هذا الموضوع خارج نطاق اختصاصنا، سنحاول توجيهك للجهة المناسبة.' },
+    { key: '9', text: 'تم جدولة اتصال للمتابعة. سنقوم بالتواصل معك قريبًا.' }
+];
+
+function renderQuickReplies() {
+    const container = document.getElementById('quickReplies');
+    if (!container) return;
+    container.innerHTML = '';
+    QUICK_TEMPLATES.forEach(t => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'quick-reply-btn';
+        btn.title = `Alt+${t.key}`;
+        btn.textContent = t.text.length > 26 ? t.text.slice(0, 26) + '…' : t.text;
+        btn.addEventListener('click', () => insertTemplate(t.text));
+        container.appendChild(btn);
+    });
+}
+
+function insertTemplate(text) {
+    const textarea = document.getElementById('messageContent');
+    if (!textarea) return;
+    const start = textarea.selectionStart || 0;
+    const end = textarea.selectionEnd || 0;
+    const value = textarea.value;
+    textarea.value = value.slice(0, start) + text + value.slice(end);
+    const newPos = start + text.length;
+    textarea.setSelectionRange(newPos, newPos);
+    textarea.focus();
+}
+
+// اختصارات لوحة المفاتيح
+document.addEventListener('keydown', function(e) {
+    // Ctrl+Enter للإرسال
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        const form = document.getElementById('adminMessageForm');
+        if (form) {
+            e.preventDefault();
+            form.requestSubmit();
+        }
+    }
+    // Alt+رقم لإدراج قالب
+    if (e.altKey && /^[1-9]$/.test(e.key)) {
+        const t = QUICK_TEMPLATES.find(x => x.key === e.key);
+        if (t) {
+            e.preventDefault();
+            insertTemplate(t.text);
+        }
+    }
+});
+
+// أوامر سلاش
+const SLASH_COMMANDS = [
+    { cmd: '/استلام', text: QUICK_TEMPLATES[0].text },
+    { cmd: '/رقم', text: QUICK_TEMPLATES[1].text },
+    { cmd: '/تحويل', text: QUICK_TEMPLATES[2].text },
+    { cmd: '/مستند', text: QUICK_TEMPLATES[3].text },
+    { cmd: '/متابعة', text: QUICK_TEMPLATES[4].text },
+    { cmd: '/حل', text: QUICK_TEMPLATES[5].text },
+    { cmd: '/تأخير', text: QUICK_TEMPLATES[6].text },
+    { cmd: '/خارج', text: QUICK_TEMPLATES[7].text },
+    { cmd: '/اتصال', text: QUICK_TEMPLATES[8].text }
+];
+
+const slashBox = document.getElementById('slashSuggest');
+const msgArea = document.getElementById('messageContent');
+let activeIndex = 0;
+
+function openSlashSuggest(matches) {
+    if (!slashBox || !msgArea) return;
+    slashBox.innerHTML = matches.map((m, i) => `
+        <div class="slash-suggest-item ${i===0?'active':''}" data-cmd="${m.cmd}">${m.cmd} — ${m.text}</div>
+    `).join('');
+    slashBox.classList.remove('d-none');
+    // وضعه أسفل التكس إريا
+    const rect = msgArea.getBoundingClientRect();
+    slashBox.style.top = (msgArea.offsetTop + msgArea.offsetHeight + 6) + 'px';
+    slashBox.style.right = '12px';
+    activeIndex = 0;
+}
+
+function closeSlashSuggest() {
+    if (slashBox) slashBox.classList.add('d-none');
+}
+
+function applySlash(cmd) {
+    const item = SLASH_COMMANDS.find(x => x.cmd === cmd);
+    if (item) {
+        // استبدال آخر كلمة (الأمر) بالنص
+        const value = msgArea.value;
+        const parts = value.split(/\s+/);
+        parts[parts.length - 1] = item.text;
+        msgArea.value = parts.join(' ');
+        msgArea.focus();
+        closeSlashSuggest();
+    }
+}
+
+msgArea.addEventListener('input', () => {
+    const value = msgArea.value;
+    const lastWord = value.split(/\s+/).pop() || '';
+    if (lastWord.startsWith('/')) {
+        const matches = SLASH_COMMANDS.filter(x => x.cmd.startsWith(lastWord));
+        if (matches.length) {
+            openSlashSuggest(matches);
+            return;
+        }
+    }
+    closeSlashSuggest();
+});
+
+msgArea.addEventListener('keydown', (e) => {
+    if (!slashBox || slashBox.classList.contains('d-none')) return;
+    const items = Array.from(slashBox.querySelectorAll('.slash-suggest-item'));
+    if (!items.length) return;
+    if (e.key === 'ArrowDown') { e.preventDefault(); activeIndex = (activeIndex + 1) % items.length; }
+    if (e.key === 'ArrowUp') { e.preventDefault(); activeIndex = (activeIndex - 1 + items.length) % items.length; }
+    if (e.key === 'Enter') { e.preventDefault(); applySlash(items[activeIndex].dataset.cmd); }
+    items.forEach((el, i) => el.classList.toggle('active', i === activeIndex));
+});
+
+slashBox.addEventListener('click', (e) => {
+    const item = e.target.closest('.slash-suggest-item');
+    if (!item) return;
+    applySlash(item.dataset.cmd);
+});
+
+document.addEventListener('DOMContentLoaded', renderQuickReplies);
+function addMessageToChat(message) {
+    const chatMessages = document.getElementById('chatMessages');
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'message admin';
+    
+    const messageType = message.message_type;
+    const typeDisplay = {
+        'admin': 'إداري عادي',
+        'admin_urgent': 'إداري عاجل',
+        'admin_info': 'معلومات إدارية',
+        'admin_help': 'مساعدة إدارية'
+    };
+    
+    messageDiv.innerHTML = `
+        <div class="message-header">
+            <i class="fas fa-user-shield me-1"></i>الإدارة
+            <span class="message-type-badge ${messageType}">${typeDisplay[messageType]}</span>
+        </div>
+        <div class="message-content">${message.content.replace(/\n/g, '<br>')}</div>
+        <div class="message-time">${new Date(message.created_at).toLocaleString('ar-SA')}</div>
+    `;
+    
+    chatMessages.appendChild(messageDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function refreshMessages() {
+    // جلب الرسائل بدون إعادة تحميل الصفحة بالكامل
+    fetch('{% url "chat:admin_get_chat_messages" chat_room.id %}')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && Array.isArray(data.messages)) {
+                const chatMessages = document.getElementById('chatMessages');
+                chatMessages.innerHTML = '';
+                data.messages.forEach(msg => {
+                    const wrapper = document.createElement('div');
+                    const messageType = msg.message_type || 'system';
+                    wrapper.className = `message ${messageType}`;
+                    wrapper.innerHTML = `
+                        <div class="message-header">
+                            ${messageType === 'user' ? '<i class="fas fa-user me-1"></i>المستخدم' : messageType === 'bot' ? '<i class="fas fa-robot me-1"></i>البوت الذكي' : messageType === 'admin' ? '<i class=\"fas fa-user-shield me-1\"></i>الإدارة' : '<i class=\"fas fa-cog me-1\"></i>النظام'}
+                        </div>
+                        <div class="message-content">${(msg.content || '').replace(/\n/g, '<br>')}</div>
+                        <div class="message-time">${new Date(msg.created_at).toLocaleString('ar-SA')}</div>
+                    `;
+                    chatMessages.appendChild(wrapper);
+                });
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+        })
+        .catch(() => {});
+}
+
+function showNotification(message, type) {
+    const notification = document.createElement('div');
+    notification.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show`;
+    notification.style.position = 'fixed';
+    notification.style.top = '20px';
+    notification.style.right = '20px';
+    notification.style.zIndex = '9999';
+    notification.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.remove();
+    }, 5000);
+}
+
+// تفعيل تحديث دوري خفيف كي يرى الإداري رسائل المستخدم أولاً بأول
+let adminPollId = null;
+document.addEventListener('visibilitychange', function() {
+    if (document.hidden) {
+        if (adminPollId) { clearInterval(adminPollId); adminPollId = null; }
+    } else {
+        refreshMessages();
+        if (!adminPollId) adminPollId = setInterval(refreshMessages, 7000);
+    }
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    refreshMessages();
+    if (!adminPollId) adminPollId = setInterval(refreshMessages, 7000);
+});
+</script>
+{% endblock %}
+
+

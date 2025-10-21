@@ -1,0 +1,90 @@
+Smart-Services-Portal — How to Use
+
+Purpose
+- Quick steps to run locally and deploy on PythonAnywhere without errors.
+
+Sections
+- Local run (Windows)
+- Deployment on PythonAnywhere
+- Environment & settings
+- Static & media files
+- Troubleshooting
+- Quick commands
+
+Local run (Windows)
+1) Open PowerShell in the project root
+   - Example: C:\Users\<you>\Desktop\dipooo
+2) Activate virtualenv
+   - venv\Scripts\Activate.ps1
+   - If blocked: Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+3) Install deps
+   - pip install -r requirements.txt
+4) DB migrations
+   - python manage.py migrate
+5) (Optional) Admin user
+   - python manage.py createsuperuser
+6) Run server
+   - python manage.py runserver --noreload
+7) Open the site
+   - http://127.0.0.1:8000/
+   - Achievements: http://127.0.0.1:8000/achievements/
+
+Deployment on PythonAnywhere (PA)
+1) Virtualenv (Python 3.11)
+   - mkvirtualenv smart_env --python=python3.11
+   - pip install -r /home/<user>/Smart-Services-Portal/requirements.txt
+2) Web app config (PA → Web tab)
+   - Code: /home/<user>/Smart-Services-Portal
+   - Virtualenv: /home/<user>/venvs/smart_env (or ~/.virtualenvs/smart_env)
+   - WSGI: website.wsgi:application
+3) Django settings on PA (website/settings.py)
+   - DEBUG = False
+   - ALLOWED_HOSTS = ["<yourdomain>.pythonanywhere.com", "<custom-domain>"]
+   - STATIC_ROOT = BASE_DIR / "staticfiles"
+   - MEDIA_ROOT = BASE_DIR / "media"
+4) Static & media mappings (PA → Web → Static files)
+   - URL /static/ → /home/<user>/Smart-Services-Portal/staticfiles
+   - URL /media/  → /home/<user>/Smart-Services-Portal/media
+5) Collect static and migrate, then reload
+   - cd /home/<user>/Smart-Services-Portal
+   - workon smart_env
+   - python manage.py collectstatic --noinput
+   - python manage.py migrate
+   - (Optional) python manage.py createsuperuser
+   - Reload the web app (PA Web tab)
+
+Environment & settings
+- TIME_ZONE: Africa/Cairo
+- LANGUAGE_CODE: ar
+- DB: SQLite at BASE_DIR / db.sqlite3
+- SECRET_KEY: set a valid value (env var recommended)
+- On HTTPS (PA): consider CSRF_COOKIE_SECURE=True and SESSION_COOKIE_SECURE=True
+
+Static & media files
+- Local: static under ./static, media under ./media
+- Production: run collectstatic, ensure PA static mappings exist
+
+Troubleshooting
+- 500 on /achievements/ (EmptyPage: page number < 1)
+  - Deploy latest code; template and view include guards now
+- Static not loading on PA
+  - Run collectstatic and verify static mapping in PA
+- DEBUG=True on PA
+  - Set DEBUG=False and add your domain to ALLOWED_HOSTS
+- Migration issues
+  - python manage.py migrate --plan
+  - python manage.py migrate
+- PowerShell cannot run Activate.ps1
+  - Run PowerShell as Admin or set execution policy for the session
+
+Quick commands
+- Activate venv (Windows): venv\Scripts\Activate.ps1
+- Run server: python manage.py runserver --noreload
+- Make & apply migrations: python manage.py makemigrations && python manage.py migrate
+- Collect static (PA): python manage.py collectstatic --noinput
+- Create admin: python manage.py createsuperuser
+
+Notes for helper bot
+- Verify website/settings.py (DEBUG, ALLOWED_HOSTS, STATIC_ROOT, MEDIA_ROOT)
+- After template/static changes on PA: collectstatic (if needed) and reload
+- If 500 on PA: check PA error log (Web tab), ensure migrations applied
