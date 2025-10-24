@@ -1,0 +1,974 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}عن المطور - محمد طارق{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Developer About Page Styles */
+    .developer-hero {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 1rem;
+        padding: 3rem 2rem;
+        margin-bottom: 2rem;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .developer-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+        opacity: 0.3;
+    }
+    
+    .developer-hero .container {
+        position: relative;
+        z-index: 2;
+    }
+    
+    .profile-section {
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+        flex-wrap: wrap;
+    }
+    
+    .profile-image-container {
+        flex-shrink: 0;
+        position: relative;
+    }
+    
+    .profile-image-container::after {
+        content: '';
+        position: absolute;
+        top: -8px;
+        left: -8px;
+        right: -8px;
+        bottom: -8px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+        z-index: -1;
+        animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+        0% {
+            transform: scale(1);
+            opacity: 0.7;
+        }
+        50% {
+            transform: scale(1.05);
+            opacity: 0.3;
+        }
+        100% {
+            transform: scale(1);
+            opacity: 0.7;
+        }
+    }
+    
+    .profile-image {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        position: relative;
+    }
+    
+    .profile-image:hover {
+        transform: scale(1.05);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+    }
+    
+    .profile-image::before {
+        content: '';
+        position: absolute;
+        top: -4px;
+        left: -4px;
+        right: -4px;
+        bottom: -4px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+        z-index: -1;
+    }
+    
+    .profile-placeholder {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+        border: 4px solid rgba(255, 255, 255, 0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        color: rgba(255, 255, 255, 0.8);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        transition: transform 0.3s ease;
+    }
+    
+    .profile-placeholder:hover {
+        transform: scale(1.05);
+    }
+    
+    .developer-info {
+        flex: 1;
+        min-width: 300px;
+    }
+    
+    .developer-name {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+    
+    .developer-title {
+        font-size: 1.3rem;
+        font-weight: 400;
+        margin-bottom: 1rem;
+        opacity: 0.9;
+    }
+    
+    .developer-description {
+        font-size: 1.1rem;
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+        opacity: 0.95;
+    }
+    
+    .social-links {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+    
+    .social-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        background: rgba(255, 255, 255, 0.2);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50px;
+        color: white;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(10px);
+    }
+    
+    .social-link:hover {
+        background: rgba(255, 255, 255, 0.3);
+        border-color: rgba(255, 255, 255, 0.5);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        color: white;
+        text-decoration: none;
+    }
+    
+    .social-link i {
+        font-size: 1.2rem;
+    }
+    
+    .skills-section {
+        background: var(--accent);
+        border-radius: 1rem;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+    
+    .section-title {
+        font-size: 1.8rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        color: var(--text);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    
+    .section-title i {
+        color: var(--bs-primary);
+    }
+    
+    .skills-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+    }
+    
+    .skill-card {
+        background: white;
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        text-align: center;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+    
+    .skill-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+    
+    .skill-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        color: var(--bs-primary);
+    }
+    
+    .skill-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: var(--text);
+    }
+    
+    .skill-description {
+        color: #6b7280;
+        font-size: 0.95rem;
+        line-height: 1.5;
+    }
+    
+    .contact-section {
+        background: var(--accent);
+        border-radius: 1rem;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+    
+    .contact-info {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+    }
+    
+    .contact-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
+        background: white;
+        border-radius: 0.75rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+    }
+    
+    .contact-item:hover {
+        transform: translateY(-2px);
+    }
+    
+    .contact-item i {
+        font-size: 1.5rem;
+        width: 40px;
+        text-align: center;
+    }
+    
+    .contact-item .fab.fa-linkedin {
+        color: #0077b5;
+    }
+    
+    .contact-item .fas.fa-envelope {
+        color: #ea4335;
+    }
+    
+    .contact-item .fas.fa-code {
+        color: var(--bs-primary);
+    }
+    
+    .contact-item a {
+        color: var(--text);
+        text-decoration: none;
+        font-weight: 500;
+    }
+    
+    .contact-item a:hover {
+        color: var(--bs-primary);
+        text-decoration: underline;
+    }
+    
+    /* Projects Section Styles */
+    .projects-section {
+        background: var(--accent);
+        border-radius: 1rem;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+    
+    .projects-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+    }
+    
+    .project-card {
+        background: white;
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .project-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(135deg, var(--bs-primary), var(--bs-success));
+    }
+    
+    .project-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+    
+    .project-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        color: var(--bs-primary);
+    }
+    
+    .project-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+        color: var(--text);
+    }
+    
+    .project-description {
+        color: #6b7280;
+        font-size: 0.95rem;
+        line-height: 1.5;
+        margin-bottom: 1rem;
+    }
+    
+    .project-tech {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .tech-tag {
+        background: var(--bs-primary);
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+    
+    .project-status {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: var(--bs-success);
+    }
+    
+    /* Stats Section Styles */
+    .stats-section {
+        background: var(--accent);
+        border-radius: 1rem;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+    
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+    }
+    
+    .stat-card {
+        background: white;
+        border-radius: 0.75rem;
+        padding: 2rem 1.5rem;
+        text-align: center;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(16, 185, 129, 0.05));
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .stat-card:hover::before {
+        opacity: 1;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+    
+    .stat-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        color: var(--bs-primary);
+        position: relative;
+        z-index: 2;
+    }
+    
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--bs-primary);
+        margin-bottom: 0.5rem;
+        position: relative;
+        z-index: 2;
+    }
+    
+    .stat-label {
+        font-size: 1rem;
+        font-weight: 500;
+        color: var(--text);
+        position: relative;
+        z-index: 2;
+    }
+    
+    /* Certifications Section Styles */
+    .certifications-section {
+        background: var(--accent);
+        border-radius: 1rem;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+    
+    .certifications-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+    }
+    
+    .cert-card {
+        background: white;
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        position: relative;
+        overflow: hidden;
+        border-left: 4px solid var(--bs-success);
+    }
+    
+    .cert-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+    
+    .cert-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        color: var(--bs-success);
+    }
+    
+    .cert-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+        color: var(--text);
+    }
+    
+    .cert-description {
+        color: #6b7280;
+        font-size: 0.95rem;
+        line-height: 1.5;
+        margin-bottom: 1rem;
+    }
+    
+    .cert-status {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: var(--bs-success);
+    }
+    
+    /* Fade-in Animation */
+    .fade-in {
+        opacity: 0;
+        transform: translateY(30px);
+        animation: fadeInUp 0.8s ease forwards;
+    }
+    
+    .fade-in:nth-child(1) { animation-delay: 0.1s; }
+    .fade-in:nth-child(2) { animation-delay: 0.2s; }
+    .fade-in:nth-child(3) { animation-delay: 0.3s; }
+    .fade-in:nth-child(4) { animation-delay: 0.4s; }
+    
+    @keyframes fadeInUp {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    /* Dark mode styles */
+    [data-bs-theme="dark"] .skills-section,
+    [data-bs-theme="dark"] .contact-section {
+        background: #1f2937;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    }
+    
+    [data-bs-theme="dark"] .skill-card,
+    [data-bs-theme="dark"] .contact-item {
+        background: #374151;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+    
+    [data-bs-theme="dark"] .skill-description {
+        color: #d1d5db;
+    }
+    
+    [data-bs-theme="dark"] .projects-section,
+    [data-bs-theme="dark"] .stats-section,
+    [data-bs-theme="dark"] .certifications-section {
+        background: #1f2937;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    }
+    
+    [data-bs-theme="dark"] .project-card,
+    [data-bs-theme="dark"] .stat-card,
+    [data-bs-theme="dark"] .cert-card {
+        background: #374151;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+    
+    [data-bs-theme="dark"] .project-description,
+    [data-bs-theme="dark"] .cert-description {
+        color: #d1d5db;
+    }
+    
+    [data-bs-theme="dark"] .stat-card::before {
+        background: linear-gradient(135deg, rgba(96, 165, 250, 0.1), rgba(52, 211, 153, 0.1));
+    }
+    
+    [data-bs-theme="dark"] .cert-card {
+        border-left-color: #34d399;
+    }
+    
+    /* Mobile responsiveness */
+    @media (max-width: 768px) {
+        .developer-hero {
+            padding: 2rem 1rem;
+        }
+        
+        .profile-section {
+            flex-direction: column;
+            text-align: center;
+            gap: 1.5rem;
+        }
+        
+        .developer-name {
+            font-size: 2rem;
+        }
+        
+        .developer-title {
+            font-size: 1.1rem;
+        }
+        
+        .developer-description {
+            font-size: 1rem;
+        }
+        
+        .social-links {
+            justify-content: center;
+        }
+        
+        .skills-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .contact-info {
+            grid-template-columns: 1fr;
+        }
+        
+        .projects-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .stat-card {
+            padding: 1.5rem 1rem;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+        }
+        
+        .certifications-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-indicator">
+    <i class="fas fa-code"></i>
+    عن المطور
+</div>
+
+<!-- Developer Hero Section -->
+<section class="developer-hero fade-in">
+    <div class="container">
+        <div class="profile-section">
+            <div class="profile-image-container">
+                <img src="{% static 'images/mohamed_tariq_profile.jpg' %}" 
+                     alt="محمد طارق - مطور مواقع ويب" 
+                     class="profile-image">
+            </div>
+            <div class="developer-info">
+                <h1 class="developer-name">محمد طارق</h1>
+                <h2 class="developer-title">مطور مواقع ويب و تطبيقات</h2>
+                <p class="developer-description">
+                    أنا محمد طارق - مطور مبدع وفضولي يحب استكشاف التقنيات الجديدة وبناء المشاريع التي تتحدى مهاراتي وتساعد الناس. 
+                    أستمتع بتحويل الأفكار إلى واقع رقمي من خلال البرمجة والتطوير.
+                </p>
+                <div class="social-links">
+                    <a href="https://www.linkedin.com/in/mohamed-diab-327a33361?utm_source=share_via&utm_content=profile&utm_medium=member_android" 
+                       class="social-link" target="_blank">
+                        <i class="fab fa-linkedin"></i>
+                        LinkedIn
+                    </a>
+                    <a href="mailto:diabm4930@gmail.com" class="social-link">
+                        <i class="fas fa-envelope"></i>
+                        البريد الإلكتروني
+                    </a>
+                    <a href="tel:+201015916082" class="social-link">
+                        <i class="fas fa-phone"></i>
+                        +201015916082
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Skills Section -->
+<section class="skills-section fade-in">
+    <div class="container">
+        <h2 class="section-title">
+            <i class="fas fa-tools"></i>
+            المهارات والتقنيات
+        </h2>
+        <div class="skills-grid">
+            <div class="skill-card">
+                <div class="skill-icon">
+                    <i class="fab fa-python"></i>
+                </div>
+                <h3 class="skill-title">Python & Django</h3>
+                <p class="skill-description">تطوير تطبيقات ويب قوية وآمنة باستخدام Django و Python</p>
+            </div>
+            <div class="skill-card">
+                <div class="skill-icon">
+                    <i class="fab fa-js-square"></i>
+                </div>
+                <h3 class="skill-title">JavaScript & Frontend</h3>
+                <p class="skill-description">إنشاء واجهات مستخدم تفاعلية وجذابة باستخدام JavaScript و CSS</p>
+            </div>
+            <div class="skill-card">
+                <div class="skill-icon">
+                    <i class="fas fa-database"></i>
+                </div>
+                <h3 class="skill-title">قواعد البيانات</h3>
+                <p class="skill-description">تصميم وإدارة قواعد البيانات بكفاءة وأمان</p>
+            </div>
+            <div class="skill-card">
+                <div class="skill-icon">
+                    <i class="fas fa-mobile-alt"></i>
+                </div>
+                <h3 class="skill-title">التطبيقات المحمولة</h3>
+                <p class="skill-description">تطوير تطبيقات محمولة متجاوبة مع جميع الأجهزة</p>
+            </div>
+            <div class="skill-card">
+                <div class="skill-icon">
+                    <i class="fas fa-cloud"></i>
+                </div>
+                <h3 class="skill-title">الحوسبة السحابية</h3>
+                <p class="skill-description">نشر وإدارة التطبيقات على منصات الحوسبة السحابية</p>
+            </div>
+            <div class="skill-card">
+                <div class="skill-icon">
+                    <i class="fas fa-cogs"></i>
+                </div>
+                <h3 class="skill-title">الأتمتة والتحسين</h3>
+                <p class="skill-description">أتمتة العمليات وتحسين الأداء لضمان أفضل تجربة مستخدم</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Projects Section -->
+<section class="projects-section fade-in">
+    <div class="container">
+        <h2 class="section-title">
+            <i class="fas fa-project-diagram"></i>
+            المشاريع والإنجازات
+        </h2>
+        <div class="projects-grid">
+            <div class="project-card">
+                <div class="project-icon">
+                    <i class="fas fa-globe"></i>
+                </div>
+                <h3 class="project-title">موقع خدمة المواطنين</h3>
+                <p class="project-description">تطوير موقع متكامل لإدارة طلبات المواطنين مع نظام إدارة متقدم</p>
+                <div class="project-tech">
+                    <span class="tech-tag">Django</span>
+                    <span class="tech-tag">Python</span>
+                    <span class="tech-tag">Bootstrap</span>
+                    <span class="tech-tag">SQLite</span>
+                </div>
+                <div class="project-status">
+                    <i class="fas fa-check-circle text-success"></i>
+                    <span>مكتمل ومُشغل</span>
+                </div>
+            </div>
+            
+            <div class="project-card">
+                <div class="project-icon">
+                    <i class="fas fa-mobile-alt"></i>
+                </div>
+                <h3 class="project-title">تطبيقات ويب متجاوبة</h3>
+                <p class="project-description">تطوير تطبيقات تعمل بكفاءة على جميع الأجهزة والشاشات</p>
+                <div class="project-tech">
+                    <span class="tech-tag">Responsive Design</span>
+                    <span class="tech-tag">CSS3</span>
+                    <span class="tech-tag">JavaScript</span>
+                </div>
+                <div class="project-status">
+                    <i class="fas fa-check-circle text-success"></i>
+                    <span>مكتمل</span>
+                </div>
+            </div>
+            
+            <div class="project-card">
+                <div class="project-icon">
+                    <i class="fas fa-database"></i>
+                </div>
+                <h3 class="project-title">أنظمة إدارة قواعد البيانات</h3>
+                <p class="project-description">تصميم وإدارة قواعد بيانات آمنة وفعالة للمشاريع المختلفة</p>
+                <div class="project-tech">
+                    <span class="tech-tag">Database Design</span>
+                    <span class="tech-tag">SQL</span>
+                    <span class="tech-tag">Optimization</span>
+                </div>
+                <div class="project-status">
+                    <i class="fas fa-check-circle text-success"></i>
+                    <span>مكتمل</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Professional Stats Section -->
+<section class="stats-section fade-in">
+    <div class="container">
+        <h2 class="section-title">
+            <i class="fas fa-chart-line"></i>
+            الإحصائيات المهنية
+        </h2>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-code"></i>
+                </div>
+                <div class="stat-number">3+</div>
+                <div class="stat-label">سنوات خبرة</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-project-diagram"></i>
+                </div>
+                <div class="stat-number">15+</div>
+                <div class="stat-label">مشروع مكتمل</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-number">100%</div>
+                <div class="stat-label">رضا العملاء</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="stat-number">24/7</div>
+                <div class="stat-label">دعم فني</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Certifications Section -->
+<section class="certifications-section fade-in">
+    <div class="container">
+        <h2 class="section-title">
+            <i class="fas fa-certificate"></i>
+            الشهادات والمؤهلات
+        </h2>
+        <div class="certifications-grid">
+            <div class="cert-card">
+                <div class="cert-icon">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <h3 class="cert-title">تطوير تطبيقات الويب</h3>
+                <p class="cert-description">شهادة متخصصة في تطوير تطبيقات الويب باستخدام Django و Python</p>
+                <div class="cert-status">
+                    <i class="fas fa-check-circle text-success"></i>
+                    <span>مُعتمد</span>
+                </div>
+            </div>
+            
+            <div class="cert-card">
+                <div class="cert-icon">
+                    <i class="fas fa-database"></i>
+                </div>
+                <h3 class="cert-title">إدارة قواعد البيانات</h3>
+                <p class="cert-description">خبرة متقدمة في تصميم وإدارة قواعد البيانات وتحسين الأداء</p>
+                <div class="cert-status">
+                    <i class="fas fa-check-circle text-success"></i>
+                    <span>مُعتمد</span>
+                </div>
+            </div>
+            
+            <div class="cert-card">
+                <div class="cert-icon">
+                    <i class="fas fa-mobile-alt"></i>
+                </div>
+                <h3 class="cert-title">التصميم المتجاوب</h3>
+                <p class="cert-description">تطوير واجهات مستخدم متجاوبة تعمل على جميع الأجهزة</p>
+                <div class="cert-status">
+                    <i class="fas fa-check-circle text-success"></i>
+                    <span>مُعتمد</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Section -->
+<section class="contact-section fade-in">
+    <div class="container">
+        <h2 class="section-title">
+            <i class="fas fa-address-book"></i>
+            تواصل معي
+        </h2>
+        <div class="contact-info">
+            <div class="contact-item">
+                <i class="fab fa-linkedin"></i>
+                <div>
+                    <strong>LinkedIn:</strong><br>
+                    <a href="https://www.linkedin.com/in/mohamed-diab-327a33361?utm_source=share_via&utm_content=profile&utm_medium=member_android" 
+                       target="_blank">Mohamed Diab</a>
+                </div>
+            </div>
+            <div class="contact-item">
+                <i class="fas fa-envelope"></i>
+                <div>
+                    <strong>البريد الإلكتروني:</strong><br>
+                    <a href="mailto:diabm4930@gmail.com">diabm4930@gmail.com</a>
+                </div>
+            </div>
+            <div class="contact-item">
+                <i class="fas fa-phone"></i>
+                <div>
+                    <strong>الهاتف:</strong><br>
+                    <a href="tel:+201015916082">+20 101 591 6082</a>
+                </div>
+            </div>
+            <div class="contact-item">
+                <i class="fas fa-code"></i>
+                <div>
+                    <strong>هذا الموقع:</strong><br>
+                    <a href="/">خدمة المواطنين</a>
+                </div>
+            </div>
+            <div class="contact-item">
+                <i class="fas fa-map-marker-alt"></i>
+                <div>
+                    <strong>الموقع:</strong><br>
+                    <span>مصر - المنوفية</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Enhanced fade-in animation with staggered effect
+    document.addEventListener('DOMContentLoaded', function() {
+        const fadeElements = document.querySelectorAll('.fade-in');
+        
+        fadeElements.forEach((element, index) => {
+            element.style.animationDelay = `${index * 0.2}s`;
+        });
+        
+        // Add intersection observer for better performance
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animationPlayState = 'running';
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        fadeElements.forEach(element => {
+            element.style.animationPlayState = 'paused';
+            observer.observe(element);
+        });
+    });
+</script>
+{% endblock %}

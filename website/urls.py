@@ -6,7 +6,7 @@ from django.contrib import admin
 from django.urls import include, path
 from django.views.generic import TemplateView
 from django.contrib.auth import views as auth_views
-from .views import home_view, about_ahmed_abouzeid_view
+from .views import home_view, about_ahmed_abouzeid_view, about_developer_view
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 
@@ -21,6 +21,7 @@ urlpatterns = [
 	path("dashboard/", include("admin_dashboard.urls")),
 	path("chat/", include("chat_app.urls")),
 	path("about/", about_ahmed_abouzeid_view, name="about_ahmed_abouzeid"),
+	path("developer/", about_developer_view, name="about_developer"),
 	path("", home_view, name="home"),
 ]
 

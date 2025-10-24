@@ -31,3 +31,8 @@ def about_ahmed_abouzeid_view(request):
     """عرض صفحة عن النائب أحمد أبو زيد"""
     return render(request, "about_ahmed_abouzeid.html")
 
+
+def about_developer_view(request):
+    """عرض صفحة عن المطور محمد طارق"""
+    return render(request, "about_developer.html")
+
