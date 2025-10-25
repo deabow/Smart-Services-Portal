@@ -13,16 +13,9 @@ class AchievementAdminForm(forms.ModelForm):
 
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
-		if self.instance and self.instance.pk:
-			# If editing existing achievement, set initial village choices
-			area = self.instance.area
-			if area in VILLAGES:
-				self.fields['village'].choices = [('', '---------')] + VILLAGES[area]
-			else:
-				self.fields['village'].choices = [('', '---------')]
-		else:
-			# If creating new achievement, start with empty village choices
-			self.fields['village'].choices = [('', '---------')]
+		# Always set all villages as choices to allow dynamic selection
+		from .models import ALL_VILLAGES
+		self.fields['village'].choices = [('', '---------')] + ALL_VILLAGES
 		
 		# Add JavaScript to update village choices dynamically
 		self.fields['area'].widget.attrs.update({
