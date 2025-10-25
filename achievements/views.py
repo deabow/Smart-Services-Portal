@@ -7,6 +7,8 @@ from django.core.cache import cache
 from django.db.models import Count, Q
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
@@ -84,8 +86,9 @@ def achievements_list_view(request: HttpRequest) -> HttpResponse:
 		return render(request, "achievements/list.html", context)
 
 
+@staff_member_required
 def achievement_update_view(request: HttpRequest, pk: int) -> HttpResponse:
-	"""تعديل إنجاز موجود"""
+	"""تعديل إنجاز موجود - للمسؤولين فقط"""
 	achievement = get_object_or_404(Achievement, pk=pk)
 	
 	if request.method == 'POST':
@@ -106,8 +109,9 @@ def achievement_update_view(request: HttpRequest, pk: int) -> HttpResponse:
 	return render(request, 'achievements/update.html', context)
 
 
+@staff_member_required
 def achievement_create_view(request: HttpRequest) -> HttpResponse:
-	"""إنشاء إنجاز جديد"""
+	"""إنشاء إنجاز جديد - للمسؤولين فقط"""
 	if request.method == 'POST':
 		form = AchievementCreateForm(request.POST)
 		if form.is_valid():
@@ -134,9 +138,10 @@ def get_villages_for_area(request: HttpRequest) -> JsonResponse:
 	return JsonResponse({'villages': []})
 
 
+@staff_member_required
 @require_POST
 def add_achievement_image(request: HttpRequest, pk: int) -> JsonResponse:
-	"""إضافة صورة للإنجاز"""
+	"""إضافة صورة للإنجاز - للمسؤولين فقط"""
 	achievement = get_object_or_404(Achievement, pk=pk)
 	
 	if request.FILES:
@@ -161,9 +166,10 @@ def add_achievement_image(request: HttpRequest, pk: int) -> JsonResponse:
 	})
 
 
+@staff_member_required
 @require_POST
 def delete_achievement_image(request: HttpRequest, pk: int) -> JsonResponse:
-	"""حذف صورة من الإنجاز"""
+	"""حذف صورة من الإنجاز - للمسؤولين فقط"""
 	image = get_object_or_404(AchievementImage, pk=pk)
 	image.delete()
 	
@@ -173,8 +179,9 @@ def delete_achievement_image(request: HttpRequest, pk: int) -> JsonResponse:
 	})
 
 
+@staff_member_required
 def achievement_images_view(request: HttpRequest, pk: int) -> HttpResponse:
-	"""عرض وإدارة صور الإنجاز"""
+	"""عرض وإدارة صور الإنجاز - للمسؤولين فقط"""
 	achievement = get_object_or_404(Achievement, pk=pk)
 	images = achievement.images.all()
 	

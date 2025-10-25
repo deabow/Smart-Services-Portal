@@ -269,10 +269,12 @@
 			<i class="fas fa-filter me-2"></i>
 			تصفية الإنجازات
 		</h3>
+		{% if user.is_staff %}
 		<a href="{% url 'achievements:create' %}" class="btn btn-success">
 			<i class="fas fa-plus me-1"></i>
 			إضافة إنجاز جديد
 		</a>
+		{% endif %}
 	</div>
 	
 	<form method="get" class="row g-3">
@@ -393,12 +395,14 @@
 							{{ achievement.images.count }} صورة
 						</small>
 						{% endif %}
+						{% if user.is_staff %}
 						<a href="{% url 'achievements:images' achievement.pk %}" class="btn btn-sm btn-outline-info" title="إدارة الصور">
 							<i class="fas fa-images"></i>
 						</a>
 						<a href="{% url 'achievements:update' achievement.pk %}" class="btn btn-sm btn-outline-primary" title="تعديل الإنجاز">
 							<i class="fas fa-edit"></i>
 						</a>
+						{% endif %}
 					</div>
 				</div>
 			</div>
