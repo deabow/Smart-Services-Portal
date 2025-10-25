@@ -142,28 +142,56 @@ def get_villages_for_area(request: HttpRequest) -> JsonResponse:
 @require_POST
 def add_achievement_image(request: HttpRequest, pk: int) -> JsonResponse:
 	"""إضافة صورة للإنجاز - للمسؤولين فقط"""
-	achievement = get_object_or_404(Achievement, pk=pk)
-	
-	if request.FILES:
-		image_file = request.FILES.get('image')
-		if image_file:
-			# إنشاء صورة جديدة
-			achievement_image = AchievementImage.objects.create(
-				achievement=achievement,
-				image=image_file
-			)
-			
+	try:
+		achievement = get_object_or_404(Achievement, pk=pk)
+		
+		if not request.FILES:
 			return JsonResponse({
-				'success': True,
-				'message': 'تم رفع الصورة بنجاح',
-				'image_id': achievement_image.id,
-				'image_url': achievement_image.image.url
+				'success': False,
+				'message': 'لم يتم رفع أي ملف'
 			})
-	
-	return JsonResponse({
-		'success': False,
-		'message': 'لم يتم رفع أي صورة'
-	})
+		
+		image_file = request.FILES.get('image')
+		if not image_file:
+			return JsonResponse({
+				'success': False,
+				'message': 'لم يتم العثور على ملف الصورة'
+			})
+		
+		# التحقق من نوع الملف
+		allowed_types = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']
+		if image_file.content_type not in allowed_types:
+			return JsonResponse({
+				'success': False,
+				'message': f'نوع الملف غير مدعوم. الأنواع المدعومة: {", ".join(allowed_types)}'
+			})
+		
+		# التحقق من حجم الملف (5MB كحد أقصى)
+		max_size = 5 * 1024 * 1024  # 5MB
+		if image_file.size > max_size:
+			return JsonResponse({
+				'success': False,
+				'message': 'حجم الملف كبير جداً. الحد الأقصى 5MB'
+			})
+		
+		# إنشاء صورة جديدة
+		achievement_image = AchievementImage.objects.create(
+			achievement=achievement,
+			image=image_file
+		)
+		
+		return JsonResponse({
+			'success': True,
+			'message': 'تم رفع الصورة بنجاح',
+			'image_id': achievement_image.id,
+			'image_url': achievement_image.image.url
+		})
+		
+	except Exception as e:
+		return JsonResponse({
+			'success': False,
+			'message': f'حدث خطأ في رفع الصورة: {str(e)}'
+		})
 
 
 @staff_member_required

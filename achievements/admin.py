@@ -13,27 +13,27 @@ class AchievementAdminForm(forms.ModelForm):
 
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
-		# Always set all villages as choices to allow dynamic selection
-		from .models import ALL_VILLAGES
-		self.fields['village'].choices = [('', '---------')] + ALL_VILLAGES
+		if self.instance and self.instance.pk:
+			# If editing existing achievement, set initial village choices
+			area = self.instance.area
+			if area in VILLAGES:
+				self.fields['village'].choices = [('', '---------')] + VILLAGES[area]
+			else:
+				self.fields['village'].choices = [('', '---------')]
+		else:
+			# If creating new achievement, start with empty village choices
+			self.fields['village'].choices = [('', '---------')]
 		
 		# Add JavaScript to update village choices dynamically
 		self.fields['area'].widget.attrs.update({
 			'onchange': 'updateVillageChoices(this.value)'
 		})
 
-	def clean(self):
-		cleaned_data = super().clean()
-		area = cleaned_data.get('area')
-		village = cleaned_data.get('village')
-		
-		if area and village:
-			# Check if village belongs to selected area
-			area_villages = [v[0] for v in VILLAGES.get(area, [])]
-			if village not in area_villages:
-				raise forms.ValidationError(f"القرية '{village}' لا تنتمي للمركز '{area}'")
-		
-		return cleaned_data
+	def clean_village(self):
+		"""Validate the selected village"""
+		village = self.cleaned_data.get('village')
+		# No validation needed here as choices are updated dynamically
+		return village
 
 
 class AchievementImageInline(admin.TabularInline):

@@ -165,18 +165,25 @@ document.addEventListener('DOMContentLoaded', function() {
                 method: 'POST',
                 body: singleFormData
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
             .then(data => {
                 if (data.success) {
                     // إضافة الصورة الجديدة للعرض
                     addImageToContainer(data.image_id, data.image_url);
+                    console.log('تم رفع الصورة بنجاح:', data.message);
                 } else {
+                    console.error('خطأ في رفع الصورة:', data.message);
                     alert('خطأ في رفع الصورة: ' + data.message);
                 }
             })
             .catch(error => {
-                console.error('Error:', error);
-                alert('حدث خطأ في رفع الصورة');
+                console.error('Error details:', error);
+                alert('حدث خطأ في رفع الصورة: ' + error.message);
             });
         });
         

@@ -70,19 +70,17 @@ class AchievementUpdateForm(forms.ModelForm):
         else:
             # إذا كان إنجاز جديد
             self.fields['village'].choices = [('', 'اختر القرية')]
+        
+        # إضافة JavaScript لتحديث خيارات القرية ديناميكياً
+        self.fields['area'].widget.attrs.update({
+            'onchange': 'updateVillageChoices(this.value)'
+        })
 
-    def clean(self):
-        cleaned_data = super().clean()
-        area = cleaned_data.get('area')
-        village = cleaned_data.get('village')
-        
-        if area and village:
-            # التحقق من أن القرية تنتمي للمركز المحدد
-            area_villages = [v[0] for v in VILLAGES.get(area, [])]
-            if village not in area_villages:
-                raise forms.ValidationError(f"القرية '{village}' لا تنتمي للمركز '{area}'")
-        
-        return cleaned_data
+    def clean_village(self):
+        """تحقق من صحة القرية المختارة"""
+        village = self.cleaned_data.get('village')
+        # لا نحتاج للتحقق هنا لأن الخيارات يتم تحديثها ديناميكياً
+        return village
 
 
 class AchievementCreateForm(AchievementUpdateForm):
