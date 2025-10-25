@@ -21,19 +21,22 @@ class AchievementAdminForm(forms.ModelForm):
 			else:
 				self.fields['village'].choices = [('', '---------')]
 		else:
-			# If creating new achievement, start with empty village choices
-			self.fields['village'].choices = [('', '---------')]
+			# If creating new achievement, start with all villages available
+			all_villages = []
+			for area_villages in VILLAGES.values():
+				all_villages.extend(area_villages)
+			self.fields['village'].choices = [('', '---------')] + all_villages
 		
 		# Add JavaScript to update village choices dynamically
 		self.fields['area'].widget.attrs.update({
 			'onchange': 'updateVillageChoices(this.value)'
 		})
 
-	def clean_village(self):
-		"""Validate the selected village"""
-		village = self.cleaned_data.get('village')
-		# No validation needed here as choices are updated dynamically
-		return village
+	def clean(self):
+		"""Validate the form data"""
+		cleaned_data = super().clean()
+		# No validation needed here as JavaScript handles the choices
+		return cleaned_data
 
 
 class AchievementImageInline(admin.TabularInline):

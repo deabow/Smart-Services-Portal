@@ -123,11 +123,14 @@ function updateVillageChoices(selectedArea) {
     const villageField = document.getElementById('{{ form.village.id_for_label }}');
     if (!villageField) return;
     
+    console.log('Updating village choices for area:', selectedArea);
+    
     // مسح الخيارات الحالية
     villageField.innerHTML = '<option value="">اختر القرية</option>';
     
     // الحصول على القرى للمركز المحدد
     const villages = villageChoices[selectedArea] || [];
+    console.log('Available villages:', villages);
     
     // إضافة الخيارات الجديدة
     villages.forEach(village => {
@@ -143,15 +146,21 @@ function updateVillageChoices(selectedArea) {
 
 // تهيئة الصفحة
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('Page loaded, village choices:', villageChoices);
+    
     const areaField = document.getElementById('{{ form.area.id_for_label }}');
     if (areaField) {
+        console.log('Area field found:', areaField.value);
         // تعيين الخيارات الأولية للقرى
         updateVillageChoices(areaField.value);
         
         // إضافة مستمع لتغيير المركز
         areaField.addEventListener('change', function() {
+            console.log('Area changed to:', this.value);
             updateVillageChoices(this.value);
         });
+    } else {
+        console.error('Area field not found');
     }
 });
 </script>

@@ -68,19 +68,22 @@ class AchievementUpdateForm(forms.ModelForm):
             else:
                 self.fields['village'].choices = [('', 'اختر القرية')]
         else:
-            # إذا كان إنجاز جديد
-            self.fields['village'].choices = [('', 'اختر القرية')]
+            # إذا كان إنجاز جديد، ابدأ بجميع القرى المتاحة
+            all_villages = []
+            for area_villages in VILLAGES.values():
+                all_villages.extend(area_villages)
+            self.fields['village'].choices = [('', 'اختر القرية')] + all_villages
         
         # إضافة JavaScript لتحديث خيارات القرية ديناميكياً
         self.fields['area'].widget.attrs.update({
             'onchange': 'updateVillageChoices(this.value)'
         })
 
-    def clean_village(self):
-        """تحقق من صحة القرية المختارة"""
-        village = self.cleaned_data.get('village')
-        # لا نحتاج للتحقق هنا لأن الخيارات يتم تحديثها ديناميكياً
-        return village
+    def clean(self):
+        """تحقق من صحة البيانات"""
+        cleaned_data = super().clean()
+        # لا نحتاج للتحقق من القرية هنا لأن JavaScript يتولى المهمة
+        return cleaned_data
 
 
 class AchievementCreateForm(AchievementUpdateForm):

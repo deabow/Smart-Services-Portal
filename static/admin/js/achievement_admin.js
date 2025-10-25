@@ -3,6 +3,8 @@ function updateVillageChoices(selectedArea) {
     const villageField = document.getElementById('id_village');
     if (!villageField) return;
     
+    console.log('Updating village choices for area:', selectedArea);
+    
     // Clear current options
     villageField.innerHTML = '<option value="">---------</option>';
     
