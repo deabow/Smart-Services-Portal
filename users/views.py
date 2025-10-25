@@ -95,6 +95,7 @@ def signup_page(request: HttpRequest) -> HttpResponse:
 
 
 def logout_view(request: HttpRequest) -> HttpResponse:
-	logout(request)
-	return redirect("home")
-
+	if request.method == 'POST':
+		logout(request)
+		return redirect("home")
+	return render(request, 'registration/logout.html')

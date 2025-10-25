@@ -1,0 +1,10 @@
+{% extends "admin/change_form.html" %}
+{% load static %}
+
+{% block extrahead %}
+{{ block.super }}
+<script>
+    console.log('Template loaded, village_choices:', {{ village_choices|safe }});
+    window.villageChoices = {{ village_choices|safe }};
+</script>
+{% endblock %}

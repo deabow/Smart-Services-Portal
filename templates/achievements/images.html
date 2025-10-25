@@ -1,0 +1,263 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}إدارة صور الإنجاز - {{ achievement.title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-images"></i>
+                        إدارة صور الإنجاز: {{ achievement.title }}
+                    </h4>
+                </div>
+                <div class="card-body">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <!-- إضافة صور جديدة -->
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5><i class="fas fa-plus"></i> إضافة صور جديدة</h5>
+                                </div>
+                                <div class="card-body">
+                                    <form id="image-upload-form" enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                        <div class="mb-3">
+                                            <label for="image-input" class="form-label">اختر الصور</label>
+                                            <input type="file" class="form-control" id="image-input" 
+                                                   name="image" accept="image/*" multiple>
+                                            <div class="form-text">يمكنك اختيار عدة صور في نفس الوقت</div>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-upload"></i> رفع الصور
+                                        </button>
+                                    </form>
+                                    
+                                    <!-- معاينة الصور قبل الرفع -->
+                                    <div id="image-preview" class="mt-3" style="display: none;">
+                                        <h6>معاينة الصور:</h6>
+                                        <div id="preview-container" class="row"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- عرض الصور الموجودة -->
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h5><i class="fas fa-images"></i> الصور الموجودة</h5>
+                            {% if images %}
+                                <div class="row" id="images-container">
+                                    {% for image in images %}
+                                    <div class="col-md-3 mb-3" id="image-{{ image.id }}">
+                                        <div class="card">
+                                            <img src="{{ image.image.url }}" class="card-img-top" 
+                                                 alt="صورة الإنجاز" style="height: 200px; object-fit: cover;">
+                                            <div class="card-body p-2">
+                                                <div class="d-flex justify-content-between">
+                                                    <small class="text-muted">
+                                                        {{ image.created_at|date:"Y/m/d" }}
+                                                    </small>
+                                                    <button class="btn btn-sm btn-danger delete-image-btn" 
+                                                            data-image-id="{{ image.id }}">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle"></i>
+                                    لا توجد صور لهذا الإنجاز بعد
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- أزرار التنقل -->
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="{% url 'achievements:list' %}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-right"></i>
+                            العودة للقائمة
+                        </a>
+                        <a href="{% url 'achievements:update' achievement.pk %}" class="btn btn-primary">
+                            <i class="fas fa-edit"></i>
+                            تعديل الإنجاز
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const imageInput = document.getElementById('image-input');
+    const imagePreview = document.getElementById('image-preview');
+    const previewContainer = document.getElementById('preview-container');
+    const uploadForm = document.getElementById('image-upload-form');
+    const imagesContainer = document.getElementById('images-container');
+
+    // معاينة الصور قبل الرفع
+    imageInput.addEventListener('change', function(e) {
+        const files = e.target.files;
+        previewContainer.innerHTML = '';
+        
+        if (files.length > 0) {
+            imagePreview.style.display = 'block';
+            
+            Array.from(files).forEach(file => {
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const col = document.createElement('div');
+                        col.className = 'col-md-2 mb-2';
+                        col.innerHTML = `
+                            <img src="${e.target.result}" class="img-thumbnail" 
+                                 style="height: 100px; object-fit: cover;">
+                        `;
+                        previewContainer.appendChild(col);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        } else {
+            imagePreview.style.display = 'none';
+        }
+    });
+
+    // رفع الصور
+    uploadForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData();
+        const files = imageInput.files;
+        
+        if (files.length === 0) {
+            alert('يرجى اختيار صورة واحدة على الأقل');
+            return;
+        }
+
+        // رفع كل صورة على حدة
+        Array.from(files).forEach(file => {
+            const singleFormData = new FormData();
+            singleFormData.append('image', file);
+            singleFormData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+            
+            fetch('{% url "achievements:add_image" achievement.pk %}', {
+                method: 'POST',
+                body: singleFormData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // إضافة الصورة الجديدة للعرض
+                    addImageToContainer(data.image_id, data.image_url);
+                } else {
+                    alert('خطأ في رفع الصورة: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('حدث خطأ في رفع الصورة');
+            });
+        });
+        
+        // مسح المعاينة وإعادة تعيين المدخل
+        imagePreview.style.display = 'none';
+        imageInput.value = '';
+    });
+
+    // حذف الصور
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('.delete-image-btn')) {
+            const button = e.target.closest('.delete-image-btn');
+            const imageId = button.dataset.imageId;
+            
+            if (confirm('هل أنت متأكد من حذف هذه الصورة؟')) {
+                fetch(`{% url "achievements:delete_image" 0 %}`.replace('0', imageId), {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                        'Content-Type': 'application/json',
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById(`image-${imageId}`).remove();
+                        
+                        // إذا لم تعد هناك صور، أظهر رسالة
+                        if (imagesContainer.children.length === 0) {
+                            imagesContainer.innerHTML = `
+                                <div class="col-md-12">
+                                    <div class="alert alert-info">
+                                        <i class="fas fa-info-circle"></i>
+                                        لا توجد صور لهذا الإنجاز بعد
+                                    </div>
+                                </div>
+                            `;
+                        }
+                    } else {
+                        alert('خطأ في حذف الصورة: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('حدث خطأ في حذف الصورة');
+                });
+            }
+        }
+    });
+
+    // دالة إضافة صورة جديدة للعرض
+    function addImageToContainer(imageId, imageUrl) {
+        const col = document.createElement('div');
+        col.className = 'col-md-3 mb-3';
+        col.id = `image-${imageId}`;
+        col.innerHTML = `
+            <div class="card">
+                <img src="${imageUrl}" class="card-img-top" 
+                     alt="صورة الإنجاز" style="height: 200px; object-fit: cover;">
+                <div class="card-body p-2">
+                    <div class="d-flex justify-content-between">
+                        <small class="text-muted">
+                            ${new Date().toLocaleDateString('ar-SA')}
+                        </small>
+                        <button class="btn btn-sm btn-danger delete-image-btn" 
+                                data-image-id="${imageId}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // إزالة رسالة "لا توجد صور" إذا كانت موجودة
+        const noImagesAlert = imagesContainer.querySelector('.alert-info');
+        if (noImagesAlert) {
+            noImagesAlert.remove();
+        }
+        
+        imagesContainer.appendChild(col);
+    }
+});
+</script>
+{% endblock %}

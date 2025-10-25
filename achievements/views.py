@@ -1,14 +1,20 @@
 from __future__ import annotations
 
-from django.http import HttpRequest, HttpResponse
-from django.shortcuts import render
+from django.http import HttpRequest, HttpResponse, JsonResponse
+from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator
 from django.core.cache import cache
 from django.db.models import Count, Q
 from django.conf import settings
+from django.contrib import messages
+from django.urls import reverse
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
 import time
+import json
 
-from .models import Achievement, AREAS, VILLAGES
+from .models import Achievement, AchievementImage, AREAS, VILLAGES
+from .forms import AchievementUpdateForm, AchievementCreateForm, AchievementImageForm
 
 
 def achievements_list_view(request: HttpRequest) -> HttpResponse:
@@ -76,4 +82,106 @@ def achievements_list_view(request: HttpRequest) -> HttpResponse:
 			"village_choices": json.dumps(VILLAGES, ensure_ascii=False),
 		}
 		return render(request, "achievements/list.html", context)
+
+
+def achievement_update_view(request: HttpRequest, pk: int) -> HttpResponse:
+	"""تعديل إنجاز موجود"""
+	achievement = get_object_or_404(Achievement, pk=pk)
+	
+	if request.method == 'POST':
+		form = AchievementUpdateForm(request.POST, instance=achievement)
+		if form.is_valid():
+			form.save()
+			messages.success(request, 'تم تحديث الإنجاز بنجاح!')
+			return redirect('achievements:list')
+	else:
+		form = AchievementUpdateForm(instance=achievement)
+	
+	import json
+	context = {
+		'form': form,
+		'achievement': achievement,
+		'village_choices': json.dumps(VILLAGES, ensure_ascii=False),
+	}
+	return render(request, 'achievements/update.html', context)
+
+
+def achievement_create_view(request: HttpRequest) -> HttpResponse:
+	"""إنشاء إنجاز جديد"""
+	if request.method == 'POST':
+		form = AchievementCreateForm(request.POST)
+		if form.is_valid():
+			form.save()
+			messages.success(request, 'تم إنشاء الإنجاز بنجاح!')
+			return redirect('achievements:list')
+	else:
+		form = AchievementCreateForm()
+	
+	import json
+	context = {
+		'form': form,
+		'village_choices': json.dumps(VILLAGES, ensure_ascii=False),
+	}
+	return render(request, 'achievements/create.html', context)
+
+
+def get_villages_for_area(request: HttpRequest) -> JsonResponse:
+	"""API endpoint للحصول على القرى المتاحة لمركز معين"""
+	area = request.GET.get('area')
+	if area and area in VILLAGES:
+		villages = VILLAGES[area]
+		return JsonResponse({'villages': villages})
+	return JsonResponse({'villages': []})
+
+
+@require_POST
+def add_achievement_image(request: HttpRequest, pk: int) -> JsonResponse:
+	"""إضافة صورة للإنجاز"""
+	achievement = get_object_or_404(Achievement, pk=pk)
+	
+	if request.FILES:
+		image_file = request.FILES.get('image')
+		if image_file:
+			# إنشاء صورة جديدة
+			achievement_image = AchievementImage.objects.create(
+				achievement=achievement,
+				image=image_file
+			)
+			
+			return JsonResponse({
+				'success': True,
+				'message': 'تم رفع الصورة بنجاح',
+				'image_id': achievement_image.id,
+				'image_url': achievement_image.image.url
+			})
+	
+	return JsonResponse({
+		'success': False,
+		'message': 'لم يتم رفع أي صورة'
+	})
+
+
+@require_POST
+def delete_achievement_image(request: HttpRequest, pk: int) -> JsonResponse:
+	"""حذف صورة من الإنجاز"""
+	image = get_object_or_404(AchievementImage, pk=pk)
+	image.delete()
+	
+	return JsonResponse({
+		'success': True,
+		'message': 'تم حذف الصورة بنجاح'
+	})
+
+
+def achievement_images_view(request: HttpRequest, pk: int) -> HttpResponse:
+	"""عرض وإدارة صور الإنجاز"""
+	achievement = get_object_or_404(Achievement, pk=pk)
+	images = achievement.images.all()
+	
+	context = {
+		'achievement': achievement,
+		'images': images,
+		'image_form': AchievementImageForm()
+	}
+	return render(request, 'achievements/images.html', context)
 

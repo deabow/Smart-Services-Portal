@@ -119,6 +119,9 @@ SIMPLE_JWT = {
 # Custom user model
 AUTH_USER_MODEL = "users.User"
 
+# Encoding settings
+DEFAULT_CHARSET = 'utf-8'
+FILE_CHARSET = 'utf-8'
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 

@@ -18,9 +18,16 @@ class AchievementAdminForm(forms.ModelForm):
 			area = self.instance.area
 			if area in VILLAGES:
 				self.fields['village'].choices = [('', '---------')] + VILLAGES[area]
+			else:
+				self.fields['village'].choices = [('', '---------')]
 		else:
 			# If creating new achievement, start with empty village choices
 			self.fields['village'].choices = [('', '---------')]
+		
+		# Add JavaScript to update village choices dynamically
+		self.fields['area'].widget.attrs.update({
+			'onchange': 'updateVillageChoices(this.value)'
+		})
 
 	def clean(self):
 		cleaned_data = super().clean()
@@ -64,13 +71,26 @@ class AchievementAdmin(admin.ModelAdmin):
 
 	def get_form(self, request, obj=None, **kwargs):
 		form = super().get_form(request, obj, **kwargs)
-		if 'area' in form.base_fields:
-			# Make area field trigger village field update
-			form.base_fields['area'].widget.attrs.update({
-				'onchange': 'updateVillageChoices(this.value)'
-			})
 		return form
 
 	class Media:
 		js = ('admin/js/achievement_admin.js',)
+		
+	def changelist_view(self, request, extra_context=None):
+		extra_context = extra_context or {}
+		import json
+		extra_context['village_choices'] = json.dumps(VILLAGES, ensure_ascii=False)
+		return super().changelist_view(request, extra_context)
+		
+	def add_view(self, request, form_url='', extra_context=None):
+		extra_context = extra_context or {}
+		import json
+		extra_context['village_choices'] = json.dumps(VILLAGES, ensure_ascii=False)
+		return super().add_view(request, form_url, extra_context)
+		
+	def change_view(self, request, object_id, form_url='', extra_context=None):
+		extra_context = extra_context or {}
+		import json
+		extra_context['village_choices'] = json.dumps(VILLAGES, ensure_ascii=False)
+		return super().change_view(request, object_id, form_url, extra_context)
 

@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}تعديل الإنجاز - {{ achievement.title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-edit"></i>
+                        تعديل الإنجاز: {{ achievement.title }}
+                    </h4>
+                </div>
+                <div class="card-body">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <form method="post" id="achievement-form">
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label for="{{ form.title.id_for_label }}" class="form-label">
+                                    {{ form.title.label }}
+                                </label>
+                                {{ form.title }}
+                                {% if form.title.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.title.errors %}
+                                            <small>{{ error }}</small>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label for="{{ form.description.id_for_label }}" class="form-label">
+                                    {{ form.description.label }}
+                                </label>
+                                {{ form.description }}
+                                {% if form.description.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.description.errors %}
+                                            <small>{{ error }}</small>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.area.id_for_label }}" class="form-label">
+                                    {{ form.area.label }}
+                                </label>
+                                {{ form.area }}
+                                {% if form.area.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.area.errors %}
+                                            <small>{{ error }}</small>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.village.id_for_label }}" class="form-label">
+                                    {{ form.village.label }}
+                                </label>
+                                {{ form.village }}
+                                {% if form.village.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.village.errors %}
+                                            <small>{{ error }}</small>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {% for error in form.non_field_errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'achievements:list' %}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-right"></i>
+                                العودة للقائمة
+                            </a>
+                            <div>
+                                <a href="{% url 'achievements:images' achievement.pk %}" class="btn btn-info me-2">
+                                    <i class="fas fa-images"></i>
+                                    إدارة الصور
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i>
+                                    حفظ التعديلات
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// بيانات القرى المتاحة
+const villageChoices = {{ village_choices|safe }};
+
+// دالة تحديث خيارات القرى عند تغيير المركز
+function updateVillageChoices(selectedArea) {
+    const villageField = document.getElementById('{{ form.village.id_for_label }}');
+    if (!villageField) return;
+    
+    // مسح الخيارات الحالية
+    villageField.innerHTML = '<option value="">اختر القرية</option>';
+    
+    // الحصول على القرى للمركز المحدد
+    const villages = villageChoices[selectedArea] || [];
+    
+    // إضافة الخيارات الجديدة
+    villages.forEach(village => {
+        const option = document.createElement('option');
+        option.value = village[0];
+        option.textContent = village[1];
+        villageField.appendChild(option);
+    });
+    
+    // مسح اختيار القرية الحالي
+    villageField.value = '';
+}
+
+// تهيئة الصفحة
+document.addEventListener('DOMContentLoaded', function() {
+    const areaField = document.getElementById('{{ form.area.id_for_label }}');
+    if (areaField) {
+        // تعيين الخيارات الأولية للقرى
+        updateVillageChoices(areaField.value);
+        
+        // إضافة مستمع لتغيير المركز
+        areaField.addEventListener('change', function() {
+            updateVillageChoices(this.value);
+        });
+    }
+});
+</script>
+{% endblock %}
