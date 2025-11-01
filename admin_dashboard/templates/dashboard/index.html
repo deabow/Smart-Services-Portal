@@ -29,7 +29,7 @@
 					 style="width: 80px; height: 80px;">
 					<i class="fas fa-users text-primary" style="font-size: 2rem; color: #1e40af !important;"></i>
 				</div>
-				<h3 class="text-primary mb-2" style="color: #1e40af !important;">{{ total_users|default:0 }}</h3>
+				<h3 class="text-primary mb-2" style="color: #1e40af !important;">{{ stats.users_count|default:0 }}</h3>
 				<p class="text-muted mb-0">إجمالي المستخدمين</p>
 			</div>
 		</div>
@@ -42,7 +42,7 @@
 					 style="width: 80px; height: 80px;">
 					<i class="fas fa-file-alt text-success" style="font-size: 2rem; color: #10b981 !important;"></i>
 				</div>
-				<h3 class="text-success mb-2" style="color: #10b981 !important;">{{ total_requests|default:0 }}</h3>
+				<h3 class="text-success mb-2" style="color: #10b981 !important;">{{ stats.requests_count|default:0 }}</h3>
 				<p class="text-muted mb-0">إجمالي الطلبات</p>
 			</div>
 		</div>
@@ -55,8 +55,8 @@
 					 style="width: 80px; height: 80px;">
 					<i class="fas fa-clock text-warning" style="font-size: 2rem; color: #f59e0b !important;"></i>
 				</div>
-				<h3 class="text-warning mb-2" style="color: #f59e0b !important;">{{ pending_requests|default:0 }}</h3>
-				<p class="text-muted mb-0">الطلبات المعلقة</p>
+				<h3 class="text-warning mb-2" style="color: #f59e0b !important;">{{ stats.completed_requests|default:0 }}</h3>
+				<p class="text-muted mb-0">الطلبات المكتملة</p>
 			</div>
 		</div>
 	</div>
@@ -68,8 +68,71 @@
 					 style="width: 80px; height: 80px;">
 					<i class="fas fa-trophy text-info" style="font-size: 2rem; color: #3b82f6 !important;"></i>
 				</div>
-				<h3 class="text-info mb-2" style="color: #3b82f6 !important;">{{ total_achievements|default:0 }}</h3>
+				<h3 class="text-info mb-2" style="color: #3b82f6 !important;">{{ stats.achievements_count|default:0 }}</h3>
 				<p class="text-muted mb-0">الإنجازات</p>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Visitor Statistics -->
+<div class="row g-4 mb-5">
+	<div class="col-md-12">
+		<div class="card border-0 shadow-sm">
+			<div class="card-header bg-transparent border-0">
+				<h5 class="mb-0" style="color: #1e40af;">
+					<i class="fas fa-chart-bar me-2"></i>
+					إحصائيات الزوار
+				</h5>
+			</div>
+			<div class="card-body">
+				<div class="row g-3">
+					<div class="col-md-3">
+						<div class="text-center p-3 bg-light rounded">
+							<i class="fas fa-globe text-primary mb-2" style="font-size: 2rem;"></i>
+							<h4 class="mb-1">{{ visitor_stats.total_visits|default:0 }}</h4>
+							<small class="text-muted">إجمالي الزيارات</small>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="text-center p-3 bg-light rounded">
+							<i class="fas fa-calendar-day text-success mb-2" style="font-size: 2rem;"></i>
+							<h4 class="mb-1">{{ visitor_stats.today_visits|default:0 }}</h4>
+							<small class="text-muted">زيارات اليوم</small>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="text-center p-3 bg-light rounded">
+							<i class="fas fa-user-check text-info mb-2" style="font-size: 2rem;"></i>
+							<h4 class="mb-1">{{ visitor_stats.today_unique|default:0 }}</h4>
+							<small class="text-muted">زوار فريدون اليوم</small>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="text-center p-3 bg-light rounded">
+							<i class="fas fa-calendar-week text-warning mb-2" style="font-size: 2rem;"></i>
+							<h4 class="mb-1">{{ monthly_total|default:0 }}</h4>
+							<small class="text-muted">زيارات آخر 30 يوم</small>
+						</div>
+					</div>
+				</div>
+				
+				<div class="row mt-3">
+					<div class="col-md-6">
+						<div class="text-center p-3 bg-success bg-opacity-10 rounded">
+							<i class="fas fa-user-tie text-success mb-2" style="font-size: 1.5rem;"></i>
+							<h5 class="mb-1">{{ visitor_stats.today_registered|default:0 }}</h5>
+							<small class="text-muted">مستخدمون مسجلون اليوم</small>
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div class="text-center p-3 bg-info bg-opacity-10 rounded">
+							<i class="fas fa-user-secret text-info mb-2" style="font-size: 1.5rem;"></i>
+							<h5 class="mb-1">{{ visitor_stats.today_guests|default:0 }}</h5>
+							<small class="text-muted">زوار ضيوف اليوم</small>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
