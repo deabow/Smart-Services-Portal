@@ -383,12 +383,8 @@
 			<div class="card-body-custom">
 				<h5 class="achievement-title">{{ achievement.title }}</h5>
 				<p class="achievement-description">{{ achievement.description|truncatewords:30 }}</p>
-				<div class="d-flex justify-content-between align-items-center">
-					<small class="text-muted">
-						<i class="fas fa-calendar-alt me-1"></i>
-						{{ achievement.created_at|date:"Y/m/d" }}
-					</small>
-					<div class="d-flex gap-2">
+				<div class="d-flex justify-content-end align-items-center">
+					<div class="d-flex gap-2 align-items-center">
 						{% if achievement.images.count > 0 %}
 						<small class="text-primary">
 							<i class="fas fa-images me-1"></i>
