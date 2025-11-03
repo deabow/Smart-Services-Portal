@@ -3,6 +3,17 @@ from __future__ import annotations
 from django.db import models
 
 
+SECTORS = (
+	("health", "الصحي"),
+	("education", "التعليم"),
+	("youth_sports", "الشباب والرياضة"),
+	("roads", "الطرق"),
+	("infrastructure", "البنية التحتية"),
+	("agriculture", "الزراعة"),
+	("industry", "الصناعة"),
+	("government_support", "دعم مؤسسات الدولة المصرية"),
+)
+
 AREAS = (
 	("منوف", "منوف"),
 	("السادات", "السادات"),
@@ -67,6 +78,7 @@ for area_villages in VILLAGES.values():
 class Achievement(models.Model):
 	title = models.CharField(max_length=255, db_index=True)  # Index for faster searches
 	description = models.TextField()
+	sectors = models.JSONField(default=list, blank=True, help_text="القطاعات التي ينتمي لها الإنجاز")  # Store multiple sectors
 	area = models.CharField(max_length=50, choices=AREAS, db_index=True)  # Index for filtering
 	village = models.CharField(max_length=100, choices=ALL_VILLAGES, blank=True, null=True, db_index=True)  # Index for filtering
 	created_at = models.DateTimeField(auto_now_add=True, db_index=True)  # Index for ordering
@@ -97,6 +109,14 @@ class Achievement(models.Model):
 			# If not found in choices, return the village code itself
 			return self.village
 		return ""
+	
+	@property
+	def sectors_display(self):
+		"""Return the display names of sectors"""
+		if not self.sectors:
+			return []
+		sector_dict = dict(SECTORS)
+		return [sector_dict.get(sector, sector) for sector in self.sectors]
 
 
 class AchievementImage(models.Model):

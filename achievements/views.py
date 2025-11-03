@@ -15,7 +15,7 @@ from django.views.decorators.http import require_POST
 import time
 import json
 
-from .models import Achievement, AchievementImage, AREAS, VILLAGES
+from .models import Achievement, AchievementImage, AREAS, VILLAGES, SECTORS
 from .forms import AchievementUpdateForm, AchievementCreateForm, AchievementImageForm
 
 
@@ -23,6 +23,7 @@ def achievements_list_view(request: HttpRequest) -> HttpResponse:
 	try:
 		area = request.GET.get("area", "").strip()
 		village = request.GET.get("village", "").strip()
+		sector = request.GET.get("sector", "").strip()
 		
 		# Simple query first to ensure it works
 		achievements_qs = (
@@ -36,6 +37,21 @@ def achievements_list_view(request: HttpRequest) -> HttpResponse:
 			achievements_qs = achievements_qs.filter(area=area)
 			if village and village in [v[0] for v in VILLAGES.get(area, [])]:
 				achievements_qs = achievements_qs.filter(village=village)
+		
+		# Filter by sector - use Python filtering for SQLite compatibility
+		if sector and sector in [s[0] for s in SECTORS]:
+			# Get all achievements and filter in Python
+			all_achievements = list(achievements_qs)
+			filtered_achievements = [
+				ach for ach in all_achievements 
+				if ach.sectors and sector in ach.sectors
+			]
+			# Create a new queryset with filtered IDs
+			if filtered_achievements:
+				filtered_ids = [ach.id for ach in filtered_achievements]
+				achievements_qs = Achievement.objects.filter(id__in=filtered_ids).prefetch_related("images").order_by("-created_at")
+			else:
+				achievements_qs = Achievement.objects.none()
 		
 		# Get available villages for selected area
 		available_villages = []
@@ -60,8 +76,10 @@ def achievements_list_view(request: HttpRequest) -> HttpResponse:
 			"page_obj": page_obj,
 			"areas": AREAS,
 			"villages": available_villages,
+			"sectors": SECTORS,
 			"selected_area": area,
 			"selected_village": village,
+			"selected_sector": sector,
 			"village_choices": json.dumps(VILLAGES, ensure_ascii=False),
 		}
 		
@@ -79,8 +97,10 @@ def achievements_list_view(request: HttpRequest) -> HttpResponse:
 			"page_obj": None,
 			"areas": AREAS,
 			"villages": [],
+			"sectors": SECTORS,
 			"selected_area": None,
 			"selected_village": None,
+			"selected_sector": None,
 			"village_choices": json.dumps(VILLAGES, ensure_ascii=False),
 		}
 		return render(request, "achievements/list.html", context)

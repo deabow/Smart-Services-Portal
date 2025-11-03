@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from django import forms
-from .models import Achievement, AchievementImage, AREAS, VILLAGES
+from .models import Achievement, AchievementImage, AREAS, VILLAGES, SECTORS
 
 
 class AchievementImageForm(forms.ModelForm):
@@ -24,9 +24,17 @@ class AchievementImageForm(forms.ModelForm):
 class AchievementUpdateForm(forms.ModelForm):
     """نموذج تعديل الإنجاز مع دعم تغيير المركز والقرية"""
     
+    sectors = forms.MultipleChoiceField(
+        choices=SECTORS,
+        widget=forms.CheckboxSelectMultiple,
+        required=False,
+        label="القطاعات",
+        help_text="اختر قطاع أو أكثر"
+    )
+    
     class Meta:
         model = Achievement
-        fields = ['title', 'description', 'area', 'village']
+        fields = ['title', 'description', 'sectors', 'area', 'village']
         widgets = {
             'title': forms.TextInput(attrs={
                 'class': 'form-control',
@@ -59,6 +67,10 @@ class AchievementUpdateForm(forms.ModelForm):
         # تعيين خيارات المركز
         self.fields['area'].choices = [('', 'اختر المركز')] + list(AREAS)
         
+        # تعيين القطاعات الحالية
+        if self.instance and self.instance.pk and self.instance.sectors:
+            self.fields['sectors'].initial = self.instance.sectors
+        
         # تعيين خيارات القرية بناءً على المركز المحدد
         if self.instance and self.instance.pk:
             # إذا كان تعديل إنجاز موجود
@@ -78,6 +90,26 @@ class AchievementUpdateForm(forms.ModelForm):
         self.fields['area'].widget.attrs.update({
             'onchange': 'updateVillageChoices(this.value)'
         })
+
+    def clean_sectors(self):
+        """تحويل القطاعات المحددة إلى قائمة"""
+        sectors = self.cleaned_data.get('sectors')
+        if sectors:
+            return list(sectors)
+        return []
+    
+    def save(self, commit=True):
+        """حفظ النموذج ومعالجة القطاعات بشكل صحيح"""
+        instance = super().save(commit=False)
+        # الحصول على بيانات القطاعات المنظفة
+        sectors = self.cleaned_data.get('sectors')
+        if sectors:
+            instance.sectors = list(sectors)
+        else:
+            instance.sectors = []
+        if commit:
+            instance.save()
+        return instance
 
     def clean(self):
         """تحقق من صحة البيانات"""
