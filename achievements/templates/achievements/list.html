@@ -92,17 +92,62 @@
 		height: 250px;
 		overflow: hidden;
 		border-radius: 0 0 20px 20px;
+		cursor: pointer;
+		background: #f8f9fa;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 	}
 
 	.card-image-container img {
 		width: 100%;
 		height: 100%;
-		object-fit: cover;
+		object-fit: contain;
 		transition: transform 0.3s ease;
 	}
 
 	.card-image-container:hover img {
 		transform: scale(1.05);
+	}
+
+	.card-image-container::after {
+		content: '';
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%) scale(0);
+		width: 60px;
+		height: 60px;
+		border-radius: 50%;
+		background: rgba(0, 0, 0, 0.6);
+		transition: all 0.3s ease;
+		opacity: 0;
+		pointer-events: none;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.card-image-container::before {
+		content: '\f00e';
+		font-family: 'Font Awesome 6 Free';
+		font-weight: 900;
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%) scale(0);
+		color: white;
+		font-size: 1.5rem;
+		z-index: 1;
+		transition: all 0.3s ease;
+		opacity: 0;
+		pointer-events: none;
+	}
+
+	.card-image-container:hover::after,
+	.card-image-container:hover::before {
+		transform: translate(-50%, -50%) scale(1);
+		opacity: 1;
 	}
 
 	.filter-section {
@@ -396,11 +441,15 @@
 
 			<!-- Image section - Simplified to show only the first image -->
 			{% if achievement.images.exists %}
-			<div class="card-image-container">
+			<div class="card-image-container achievement-image-clickable" 
+				 data-image-url="{{ achievement.images.first.image.url }}"
+				 data-title="{{ achievement.title }}"
+				 data-description="{{ achievement.description|truncatewords:50 }}"
+				 data-image-count="{{ achievement.images.count }}">
 				<img src="{{ achievement.images.first.image.url }}" alt="{{ achievement.title }}" class="w-100 h-100">
 			</div>
 			{% else %}
-			<div class="card-image-container" style="background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%); display: flex; align-items: center; justify-content: center;">
+			<div class="card-image-container" style="background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%); display: flex; align-items: center; justify-content: center; cursor: default;">
 				<i class="fas fa-image text-muted" style="font-size: 3rem;"></i>
 			</div>
 			{% endif %}
@@ -501,6 +550,106 @@
 </div>
 {% endif %}
 
+<!-- Image Modal -->
+<div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered" style="max-width: 90vw; margin: auto;">
+		<div class="modal-content" style="max-height: 95vh; display: flex; flex-direction: column;">
+			<div class="modal-header" style="background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%); color: white; flex-shrink: 0;">
+				<h5 class="modal-title" id="imageModalLabel">معرض الصور</h5>
+				<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body" style="padding: 0; flex: 1; display: flex; flex-direction: column; overflow: hidden; background: #1a1a1a;">
+				<div id="imageContainer" style="flex: 1; display: flex; align-items: center; justify-content: center; padding: 20px; min-height: 400px; overflow: auto; position: relative;">
+					<img id="modalImage" src="" alt="" style="max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; display: block; margin: auto;">
+				</div>
+				<div class="p-3 text-center border-top" style="background: white; flex-shrink: 0;">
+					<h6 id="modalImageTitle" class="mb-2 fw-bold"></h6>
+					<p id="modalImageDescription" class="text-muted mb-0 small"></p>
+					<small class="text-muted d-block mt-2" id="imageCountContainer" style="display: none;">
+						<i class="fas fa-images"></i> 
+						<span id="imageCount"></span> صورة متاحة
+					</small>
+				</div>
+			</div>
+			<div class="modal-footer" style="flex-shrink: 0;">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+					<i class="fas fa-times me-1"></i> إغلاق
+				</button>
+				<a id="downloadImageBtn" href="#" download class="btn btn-primary">
+					<i class="fas fa-download me-1"></i> تحميل الصورة
+				</a>
+			</div>
+		</div>
+	</div>
+</div>
+
+<style>
+	#imageModal .modal-content {
+		border-radius: 15px;
+		overflow: hidden;
+		box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+	}
+
+	#imageModal #imageContainer {
+		width: 100%;
+		height: 100%;
+		background: #1a1a1a;
+		overflow: hidden;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		position: relative;
+	}
+
+	#imageModal #modalImage {
+		transition: transform 0.3s ease;
+		max-width: 100%;
+		max-height: 70vh;
+		width: auto;
+		height: auto;
+		object-fit: contain;
+		display: block;
+		margin: 0;
+		padding: 20px;
+	}
+
+	#imageModal #modalImage:hover {
+		cursor: zoom-in;
+	}
+
+	#imageModal .btn-close-white {
+		filter: invert(1);
+	}
+
+	/* Responsive adjustments */
+	@media (max-width: 768px) {
+		#imageModal .modal-dialog {
+			max-width: 98vw !important;
+			margin: 0.5rem auto !important;
+		}
+		
+		#imageModal #imageContainer {
+			min-height: 350px !important;
+		}
+		
+		#imageModal #modalImage {
+			max-height: 60vh;
+			padding: 15px;
+		}
+	}
+
+	@media (max-width: 576px) {
+		#imageModal #imageContainer {
+			min-height: 300px !important;
+		}
+		
+		#imageModal #modalImage {
+			max-height: 50vh;
+			padding: 10px;
+		}
+	}
+</style>
+
 <script>
 function updateVillages() {
 	const areaSelect = document.getElementById('area');
@@ -529,9 +678,68 @@ function updateVillages() {
 	}
 }
 
-// Initialize villages on page load
+function openImageModal(imageSrc, title, description, imageCount = 1) {
+	const modalElement = document.getElementById('imageModal');
+	const modal = new bootstrap.Modal(modalElement);
+	const modalImage = document.getElementById('modalImage');
+	const modalTitle = document.getElementById('modalImageTitle');
+	const modalDescription = document.getElementById('modalImageDescription');
+	const downloadBtn = document.getElementById('downloadImageBtn');
+	const imageCountSpan = document.getElementById('imageCount');
+	
+	// Set title and description first
+	modalTitle.textContent = title || '';
+	if (description && description.trim() !== '') {
+		modalDescription.textContent = description;
+		modalDescription.style.display = 'block';
+	} else {
+		modalDescription.style.display = 'none';
+	}
+	
+	// Set download button
+	downloadBtn.href = imageSrc;
+	downloadBtn.download = (title || 'image').replace(/[^a-z0-9]/gi, '_').toLowerCase() + '.jpg';
+	
+	// Set image count
+	const imageCountContainer = document.getElementById('imageCountContainer');
+	if (imageCountSpan && imageCountContainer) {
+		if (imageCount > 1) {
+			imageCountSpan.textContent = imageCount;
+			imageCountContainer.style.display = 'block';
+		} else {
+			imageCountContainer.style.display = 'none';
+		}
+	}
+	
+	// Set image source and reset styles
+	modalImage.src = imageSrc;
+	modalImage.alt = title || 'صورة الإنجاز';
+	modalImage.style.display = 'block';
+	modalImage.style.opacity = '1';
+	modalImage.style.width = 'auto';
+	modalImage.style.height = 'auto';
+	modalImage.style.maxWidth = '100%';
+	modalImage.style.maxHeight = '70vh';
+	
+	// Show modal
+	modal.show();
+}
+
+// Initialize villages and image click events on page load
 document.addEventListener('DOMContentLoaded', function() {
 	updateVillages();
+	
+	// Add click events to achievement images
+	const achievementImages = document.querySelectorAll('.achievement-image-clickable');
+	achievementImages.forEach(function(container) {
+		container.addEventListener('click', function() {
+			const imageUrl = this.getAttribute('data-image-url');
+			const title = this.getAttribute('data-title');
+			const description = this.getAttribute('data-description');
+			const imageCount = parseInt(this.getAttribute('data-image-count')) || 1;
+			openImageModal(imageUrl, title, description, imageCount);
+		});
+	});
 });
 </script>
 {% endblock %}

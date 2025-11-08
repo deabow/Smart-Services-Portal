@@ -29,7 +29,12 @@ def home_view(request):
 
 def about_ahmed_abouzeid_view(request):
     """عرض صفحة عن النائب أحمد أبو زيد"""
-    return render(request, "about_ahmed_abouzeid.html")
+    # جلب أحدث 8 إنجازات لعرضها في صفحة عن النائب
+    achievements = Achievement.objects.prefetch_related('images').order_by('-id')[:8]
+    context = {
+        'achievements': achievements,
+    }
+    return render(request, "about_ahmed_abouzeid.html", context)
 
 
 def about_developer_view(request):

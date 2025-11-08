@@ -150,6 +150,11 @@ else:
         _local_ip = socket.gethostbyname(socket.gethostname())
         if _local_ip and _local_ip not in ("127.0.0.1", "0.0.0.0"):
             CSRF_TRUSTED_ORIGINS.append(f"http://{_local_ip}:8000")
+        
+        # Add common local network IPs
+        _local_ips = ["192.168.1.6", "192.168.61.1", "192.168.111.1"]
+        for ip in _local_ips:
+            CSRF_TRUSTED_ORIGINS.append(f"http://{ip}:8000")
     except Exception:
         pass
 

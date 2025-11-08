@@ -206,124 +206,89 @@
                 </div>
             </div>
 
-            <!-- Activities Tab -->
-           
-
             <!-- Achievements Tab -->
             <div class="tab-pane fade" id="achievements" role="tabpanel">
-                <div class="content-card">
-                    <h3 class="section-title">
-                        <i class="fas fa-trophy text-warning"></i>
-                        الإنجازات والمشاريع
-                    </h3>
-                    
-                    <div class="achievements-content">
-                        <div class="achievements-grid">
-                            <div class="achievement-card">
-                                <div class="achievement-icon">
-                                    <i class="fas fa-road"></i>
-                                </div>
-                                <h4>تطوير الطرق</h4>
-                                <p>تطوير شامل لشبكة الطرق في الدائرة الانتخابية مع رصف الطرق الترابية</p>
-                                <div class="achievement-stats">
-                                    <span class="stat">+25</span>
-                                    <span class="stat-label">كيلومتر مطور</span>
-                                </div>
-                            </div>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="content-card">
+                            <h3 class="section-title">
+                                <i class="fas fa-trophy text-warning"></i>
+                                إنجازات النائب أحمد أبو زيد
+                            </h3>
                             
-                           
-                            
-                            <div class="achievement-card">
-                                <div class="achievement-icon">
-                                    <i class="fas fa-hospital"></i>
-                                </div>
-                                <h4>الخدمات الصحية</h4>
-                                <p>تطوير المستشفيات والمراكز الصحية وتوفير الأجهزة الطبية</p>
-                                <div class="achievement-stats">
-                                    <span class="stat">+5</span>
-                                    <span class="stat-label">مراكز صحية</span>
-                                </div>
-                            </div>
-                            
-                       
-                           
-                            
-                            <div class="achievement-card">
-                                <div class="achievement-icon">
-                                    <i class="fas fa-users"></i>
-                                </div>
-                                <h4>خدمة المواطنين</h4>
-                                <p>حل أكثر من 5000 طلب ومسألة للمواطنين</p>
-                                <div class="achievement-stats">
-                                    <span class="stat">5000+</span>
-                                    <span class="stat-label">طلب محلول</span>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="achievements-gallery">
-                            <h4 class="gallery-section-title">
-                                <i class="fas fa-camera text-warning"></i>
-                                معرض الإنجازات
-                            </h4>
-                            <div class="modern-achievements-gallery">
-                                <div class="achievement-gallery-item">
-                                    <div class="gallery-image-container">
-                                        <img src="{% static 'images/صورة واتساب بتاريخ 1447-05-16 في 21.18.45_7574d868.jpg' %}" alt="إنجاز 1" class="achievement-gallery-img">
-                                        <div class="achievement-gallery-overlay">
-                                            <div class="overlay-content">
-                                                <h5>مشاريع التنمية</h5>
-                                                <p>تطوير شامل للمنطقة</p>
-                                                <button class="btn btn-light btn-sm">
-                                                    <i class="fas fa-eye"></i> عرض التفاصيل
-                                                </button>
+                            {% if achievements %}
+                            <div class="row g-4 mt-3">
+                                {% for achievement in achievements %}
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="achievement-card" style="background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); border: none; border-radius: 20px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; position: relative;">
+                                        <!-- Header with area and village -->
+                                        <div class="card-header-custom" style="background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%); color: white; border: none; border-radius: 20px 20px 0 0; padding: 1.5rem; position: relative;">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span class="area-badge" style="background: rgba(255, 255, 255, 0.2); padding: 0.5rem 1rem; border-radius: 25px; font-size: 0.9rem; font-weight: 600; backdrop-filter: blur(10px);">{{ achievement.area }}</span>
+                                                {% if achievement.village %}
+                                                <span class="village-badge" style="background: rgba(255, 255, 255, 0.15); padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.8rem; backdrop-filter: blur(10px);">
+                                                    <i class="fas fa-map-marker-alt me-1"></i>
+                                                    {{ achievement.village_display_name }}
+                                                </span>
+                                                {% endif %}
                                             </div>
+                                        </div>
+
+                                        <!-- Image section -->
+                                        {% if achievement.images.exists %}
+                                        <div class="card-image-container" style="position: relative; height: 250px; overflow: hidden; border-radius: 0; cursor: pointer; background: #f8f9fa; display: flex; align-items: center; justify-content: center;">
+                                            <img src="{{ achievement.images.first.image.url }}" alt="{{ achievement.title }}" class="w-100 h-100" style="object-fit: cover;">
+                                        </div>
+                                        {% else %}
+                                        <div class="card-image-container" style="position: relative; height: 250px; overflow: hidden; border-radius: 0; background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%); display: flex; align-items: center; justify-content: center; cursor: default;">
+                                            <i class="fas fa-image text-muted" style="font-size: 3rem;"></i>
+                                        </div>
+                                        {% endif %}
+
+                                        <!-- Content -->
+                                        <div class="card-body-custom" style="padding: 2rem; background: white;">
+                                            <h5 class="achievement-title" style="font-size: 1.4rem; font-weight: 700; color: #1e40af; margin-bottom: 1rem; line-height: 1.3;">{{ achievement.title }}</h5>
+                                            
+                                            <!-- Sectors Display -->
+                                            {% if achievement.sectors %}
+                                            <div class="mb-2">
+                                                {% for sector in achievement.sectors_display %}
+                                                <span class="sector-badge" style="display: inline-block; background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%); color: #0369a1; padding: 0.3rem 0.8rem; border-radius: 15px; font-size: 0.85rem; font-weight: 600; margin: 0.2rem 0.2rem 0.2rem 0;">
+                                                    <i class="fas fa-tag me-1"></i>
+                                                    {{ sector }}
+                                                </span>
+                                                {% endfor %}
+                                            </div>
+                                            {% endif %}
+                                            
+                                            <p class="achievement-description" style="color: #64748b; line-height: 1.6; font-size: 1rem; margin-bottom: 1.5rem;">{{ achievement.description|truncatewords:30 }}</p>
+                                            
+                                            {% if achievement.images.count > 0 %}
+                                            <div class="d-flex justify-content-end align-items-center">
+                                                <small class="text-primary">
+                                                    <i class="fas fa-images me-1"></i>
+                                                    {{ achievement.images.count }} صورة
+                                                </small>
+                                            </div>
+                                            {% endif %}
                                         </div>
                                     </div>
                                 </div>
-                                <div class="achievement-gallery-item">
-                                    <div class="gallery-image-container">
-                                        <img src="{% static 'images/513855479_30109175582059932_767779498495140005_n.jpg' %}" alt="إنجاز 2" class="achievement-gallery-img">
-                                        <div class="achievement-gallery-overlay">
-                                            <div class="overlay-content">
-                                                <h5>خدمة المواطنين</h5>
-                                                <p>حل المشاكل بسرعة وكفاءة</p>
-                                                <button class="btn btn-light btn-sm">
-                                                    <i class="fas fa-eye"></i> عرض التفاصيل
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="achievement-gallery-item">
-                                    <div class="gallery-image-container">
-                                        <img src="{% static 'images/4.jpg' %}" alt="إنجاز 3" class="achievement-gallery-img">
-                                        <div class="achievement-gallery-overlay">
-                                            <div class="overlay-content">
-                                                <h5>لقاءات المواطنين</h5>
-                                                <p>قرب من الناس وحل المشاكل</p>
-                                                <button class="btn btn-light btn-sm">
-                                                    <i class="fas fa-eye"></i> عرض التفاصيل
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="achievement-gallery-item">
-                                    <div class="gallery-image-container">
-                                        <img src="{% static 'images/5.jpg' %}" alt="إنجاز 4" class="achievement-gallery-img">
-                                        <div class="achievement-gallery-overlay">
-                                            <div class="overlay-content">
-                                                <h5>الأنشطة المجتمعية</h5>
-                                                <p>مشاركة فعالة في المجتمع</p>
-                                                <button class="btn btn-light btn-sm">
-                                                    <i class="fas fa-eye"></i> عرض التفاصيل
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                {% endfor %}
                             </div>
+                            
+                            <div class="text-center mt-4">
+                                <a href="{% url 'achievements:list' %}" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-trophy me-2"></i>
+                                    عرض جميع الإنجازات
+                                </a>
+                            </div>
+                            {% else %}
+                            <div class="text-center py-5">
+                                <i class="fas fa-trophy text-muted" style="font-size: 4rem; margin-bottom: 1rem;"></i>
+                                <p class="text-muted" style="font-size: 1.2rem;">لا توجد إنجازات متاحة حالياً</p>
+                            </div>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
