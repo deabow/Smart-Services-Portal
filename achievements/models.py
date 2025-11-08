@@ -81,14 +81,12 @@ class Achievement(models.Model):
 	sectors = models.JSONField(default=list, blank=True, help_text="القطاعات التي ينتمي لها الإنجاز")  # Store multiple sectors
 	area = models.CharField(max_length=50, choices=AREAS, db_index=True)  # Index for filtering
 	village = models.CharField(max_length=100, choices=ALL_VILLAGES, blank=True, null=True, db_index=True)  # Index for filtering
-	created_at = models.DateTimeField(auto_now_add=True, db_index=True)  # Index for ordering
 
 	class Meta:
 		indexes = [
 			models.Index(fields=['area', 'village']),  # Composite index for area+village filtering
-			models.Index(fields=['-created_at']),  # Index for ordering by creation date
 		]
-		ordering = ['-created_at']  # Default ordering
+		ordering = ['id']  # Default ordering by ID
 
 	def __str__(self) -> str:
 		return self.title
@@ -126,17 +124,16 @@ class AchievementImage(models.Model):
 		related_name="images",
 	)
 	image = models.ImageField(
-		upload_to="achievements/%Y/%m/%d/", 
+		upload_to="achievements/images/", 
 		blank=True, 
 		null=True,
 		help_text="سيتم تحسين الصورة تلقائياً"
 	)
-	created_at = models.DateTimeField(auto_now_add=True, db_index=True)
 
 	class Meta:
-		ordering = ['created_at']
+		ordering = ['id']
 		indexes = [
-			models.Index(fields=['achievement', 'created_at']),
+			models.Index(fields=['achievement']),
 		]
 
 	def __str__(self) -> str:

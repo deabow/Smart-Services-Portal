@@ -105,41 +105,6 @@
 		transform: scale(1.05);
 	}
 
-	.carousel-indicators {
-		bottom: 10px;
-	}
-
-	.carousel-indicators button {
-		width: 8px;
-		height: 8px;
-		border-radius: 50%;
-		background: rgba(255, 255, 255, 0.5);
-		border: none;
-		margin: 0 3px;
-	}
-
-	.carousel-indicators button.active {
-		background: white;
-	}
-
-	.carousel-control-prev,
-	.carousel-control-next {
-		width: 40px;
-		height: 40px;
-		background: rgba(0, 0, 0, 0.5);
-		border-radius: 50%;
-		top: 50%;
-		transform: translateY(-50%);
-	}
-
-	.carousel-control-prev {
-		left: 10px;
-	}
-
-	.carousel-control-next {
-		right: 10px;
-	}
-
 	.filter-section {
 		background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
 		border-radius: 20px;
@@ -429,36 +394,11 @@
 				</div>
 			</div>
 
-			<!-- Image section -->
+			<!-- Image section - Simplified to show only the first image -->
 			{% if achievement.images.exists %}
-				{% if achievement.images.count > 1 %}
-				<div class="card-image-container">
-					<div id="carousel-{{ achievement.id }}" class="carousel slide h-100" data-bs-ride="carousel" data-bs-interval="5000">
-						<div class="carousel-inner h-100">
-							{% for image in achievement.images.all %}
-							<div class="carousel-item {% if forloop.first %}active{% endif %} h-100">
-								<img src="{{ image.image.url }}" class="d-block w-100 h-100" alt="{{ achievement.title }}">
-							</div>
-							{% endfor %}
-						</div>
-						<button class="carousel-control-prev" type="button" data-bs-target="#carousel-{{ achievement.id }}" data-bs-slide="prev">
-							<span class="carousel-control-prev-icon"></span>
-						</button>
-						<button class="carousel-control-next" type="button" data-bs-target="#carousel-{{ achievement.id }}" data-bs-slide="next">
-							<span class="carousel-control-next-icon"></span>
-						</button>
-						<div class="carousel-indicators">
-							{% for image in achievement.images.all %}
-							<button type="button" data-bs-target="#carousel-{{ achievement.id }}" data-bs-slide-to="{{ forloop.counter0 }}" {% if forloop.first %}class="active"{% endif %}></button>
-							{% endfor %}
-						</div>
-					</div>
-				</div>
-				{% else %}
-				<div class="card-image-container">
-					<img src="{{ achievement.images.first.image.url }}" alt="{{ achievement.title }}" class="w-100 h-100">
-				</div>
-				{% endif %}
+			<div class="card-image-container">
+				<img src="{{ achievement.images.first.image.url }}" alt="{{ achievement.title }}" class="w-100 h-100">
+			</div>
 			{% else %}
 			<div class="card-image-container" style="background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%); display: flex; align-items: center; justify-content: center;">
 				<i class="fas fa-image text-muted" style="font-size: 3rem;"></i>

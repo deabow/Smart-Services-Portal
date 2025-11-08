@@ -29,7 +29,7 @@ def achievements_list_view(request: HttpRequest) -> HttpResponse:
 		achievements_qs = (
 			Achievement.objects
 			.prefetch_related("images")
-			.order_by("-created_at")
+			.order_by("-id")
 		)
 		
 		# Apply filters with validation
@@ -49,7 +49,7 @@ def achievements_list_view(request: HttpRequest) -> HttpResponse:
 			# Create a new queryset with filtered IDs
 			if filtered_achievements:
 				filtered_ids = [ach.id for ach in filtered_achievements]
-				achievements_qs = Achievement.objects.filter(id__in=filtered_ids).prefetch_related("images").order_by("-created_at")
+				achievements_qs = Achievement.objects.filter(id__in=filtered_ids).prefetch_related("images").order_by("-id")
 			else:
 				achievements_qs = Achievement.objects.none()
 		
