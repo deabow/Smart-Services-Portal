@@ -39,6 +39,7 @@ def signup_page(request: HttpRequest) -> HttpResponse:
 		full_name = request.POST.get("full_name", "")
 		phone = request.POST.get("phone", "")
 		address = request.POST.get("address", "")
+		national_id = request.POST.get("national_id", "")
 		
 		# التحقق من صحة البيانات
 		errors = []
@@ -57,12 +58,18 @@ def signup_page(request: HttpRequest) -> HttpResponse:
 			errors.append("رقم الهاتف يجب أن يكون من 10-11 رقم")
 		if not address:
 			errors.append("العنوان مطلوب")
+		if not national_id:
+			errors.append("الرقم القومي مطلوب")
+		elif not national_id.isdigit() or len(national_id) != 14:
+			errors.append("الرقم القومي يجب أن يكون 14 رقم")
 		
 		# التحقق من وجود المستخدم
 		if User.objects.filter(username=username).exists():
 			errors.append("اسم المستخدم موجود بالفعل")
 		if User.objects.filter(email=email).exists():
 			errors.append("البريد الإلكتروني موجود بالفعل")
+		if national_id and User.objects.filter(national_id=national_id).exists():
+			errors.append("الرقم القومي مسجل بالفعل")
 		
 		if errors:
 			# إرجاع الأخطاء للقالب
@@ -80,7 +87,8 @@ def signup_page(request: HttpRequest) -> HttpResponse:
 				password=password1,
 				full_name=full_name,
 				phone=phone,
-				address=address
+				address=address,
+				national_id=national_id
 			)
 			login(request, user)
 			return redirect("home")

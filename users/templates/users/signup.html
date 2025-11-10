@@ -75,14 +75,29 @@
 						</div>
 					</div>
 
-					<div class="mb-3">
-						<label for="id_address" class="form-label fw-bold" style="color: #1e40af;">العنوان *</label>
-						<div class="input-group">
-							<span class="input-group-text bg-light border-end-0">
-								<i class="fas fa-map-marker-alt text-muted"></i>
-							</span>
-							<input type="text" class="form-control border-start-0" id="id_address" name="address" 
-								   placeholder="أدخل العنوان" value="{{ form_data.address|default:'' }}" required>
+					<div class="row">
+						<div class="col-md-6 mb-3">
+							<label for="id_national_id" class="form-label fw-bold" style="color: #1e40af;">الرقم القومي *</label>
+							<div class="input-group">
+								<span class="input-group-text bg-light border-end-0">
+									<i class="fas fa-id-card text-muted"></i>
+								</span>
+								<input type="text" class="form-control border-start-0" id="id_national_id" name="national_id" 
+									   placeholder="أدخل الرقم القومي (14 رقم)" value="{{ form_data.national_id|default:'' }}" 
+									   pattern="[0-9]{14}" title="أدخل رقم قومي صحيح (14 رقم)" maxlength="14" required>
+							</div>
+							<div class="form-text">يجب أن يكون الرقم القومي 14 رقم</div>
+						</div>
+
+						<div class="col-md-6 mb-3">
+							<label for="id_address" class="form-label fw-bold" style="color: #1e40af;">العنوان *</label>
+							<div class="input-group">
+								<span class="input-group-text bg-light border-end-0">
+									<i class="fas fa-map-marker-alt text-muted"></i>
+								</span>
+								<input type="text" class="form-control border-start-0" id="id_address" name="address" 
+									   placeholder="أدخل العنوان" value="{{ form_data.address|default:'' }}" required>
+							</div>
 						</div>
 					</div>
 

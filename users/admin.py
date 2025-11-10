@@ -9,9 +9,9 @@ User = get_user_model()
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-	list_display = ("id", "username", "email", "full_name", "phone", "address", "is_staff", "is_active", "date_joined")
+	list_display = ("id", "username", "email", "full_name", "phone", "national_id", "address", "is_staff", "is_active", "date_joined")
 	list_display_links = ("username", "email")
-	search_fields = ("username", "email", "full_name", "phone", "address")
+	search_fields = ("username", "email", "full_name", "phone", "address", "national_id")
 	list_filter = ("is_staff", "is_active", "date_joined")
 	readonly_fields = ("date_joined", "last_login")
 	fieldsets = (
@@ -19,7 +19,7 @@ class UserAdmin(admin.ModelAdmin):
 			"fields": ("username", "email", "password")
 		}),
 		("البيانات الشخصية", {
-			"fields": ("first_name", "last_name", "full_name", "phone", "address")
+			"fields": ("first_name", "last_name", "full_name", "phone", "national_id", "address")
 		}),
 		("الصلاحيات", {
 			"fields": ("is_active", "is_staff", "is_superuser", "groups", "user_permissions")
